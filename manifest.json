@@ -2,7 +2,7 @@
   "name": "มณีจันทร์ รีสอร์ท",
   "short_name": "มณีจันทร์",
   "description": "ระบบแจ้งซ่อมและ Routine มณีจันทร์ รีสอร์ท",
-  "start_url": "/ttt/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a1628",
   "theme_color": "#0a1628",
