@@ -157,11 +157,16 @@ function addLoggedTodayLocal(uid){
 // ============================================================
 async function getDriveUrl(path) {
   if (!path) return null;
-  if (path.startsWith("http")) return path;
+  // cache ตรวจก่อน
   if (state.imgUrlCache[path]) return state.imgUrlCache[path];
   try {
     const res = await api({ action:"getDriveImageUrl", path:encodeURIComponent(path) });
-    if (res.success) { state.imgUrlCache[path]=res.url; return res.url; }
+    if (res.success && res.b64) {
+      // แปลง base64 เป็น data URI แสดงได้เลย ไม่ต้องพึ่ง Drive URL
+      const dataUri = `data:${res.mime_type || "image/jpeg"};base64,${res.b64}`;
+      state.imgUrlCache[path] = dataUri;
+      return dataUri;
+    }
   } catch(e){}
   return null;
 }
