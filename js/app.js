@@ -30,19 +30,14 @@ const api = {
   },
 
 async post(body) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    // ลบ headers ออกทั้งหมด หรือเปลี่ยนเป็น text/plain
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error('Network error: ' + res.status);
-  return res.json();
-},
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+    });
     if (!res.ok) throw new Error('Network error: ' + res.status);
     return res.json();
   },
-};
 
 // ===== UI HELPERS =====
 function showLoading(msg = 'กำลังโหลด...') {
