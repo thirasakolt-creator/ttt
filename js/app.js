@@ -29,7 +29,7 @@ const api = {
     return res.json();
   },
 
-async post(body) {
+  async post(body) {
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -37,7 +37,9 @@ async post(body) {
     });
     if (!res.ok) throw new Error('Network error: ' + res.status);
     return res.json();
-  },
+  },        // ← ปิด post()
+};  
+
 
 // ===== UI HELPERS =====
 function showLoading(msg = 'กำลังโหลด...') {
