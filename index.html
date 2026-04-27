@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>ปิดงานแจ้งซ่อม</title>
 <style>
-  /* ── Variables ── */
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
   :root {
     --bg:      #0f1117;
     --surface: #1a1d27;
@@ -32,539 +33,234 @@
     overflow-x: hidden;
   }
 
-  /* ── Google Font ── */
-  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-
-  /* ── Top Bar ── */
   .topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: sticky; top: 0; z-index: 100;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
     padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
   }
-  .topbar-title {
-    flex: 1;
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: .3px;
-  }
-  .topbar-sub {
-    font-size: 11px;
-    color: var(--muted);
-    font-weight: 400;
-  }
+  .topbar-title { flex: 1; font-size: 17px; font-weight: 600; letter-spacing: .3px; }
+  .topbar-sub { font-size: 11px; color: var(--muted); font-weight: 400; }
 
-  /* ── Status LED ── */
   .status-led {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--muted);
-    flex-shrink: 0;
-    transition: background .3s;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--muted); flex-shrink: 0; transition: background .3s;
   }
-  .status-led.syncing {
-    background: var(--danger);
-    animation: blink .7s infinite;
-  }
+  .status-led.syncing { background: var(--danger); animation: blink .7s infinite; }
   .status-led.ok { background: var(--success); }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-  /* ── Search bar ── */
-  .search-wrap {
-    padding: 12px 16px 8px;
-  }
+  .search-wrap { padding: 12px 16px 8px; }
   .search-box {
-    width: 100%;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 16px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 14px;
-    outline: none;
-    transition: border .2s;
+    width: 100%; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 16px; color: var(--text);
+    font-family: var(--font); font-size: 14px; outline: none; transition: border .2s;
   }
   .search-box:focus { border-color: var(--accent); }
   .search-box::placeholder { color: var(--muted); }
 
-  /* ── Tabs ── */
-  .tabs {
-    display: flex;
-    padding: 0 16px;
-    gap: 8px;
-    margin-bottom: 4px;
-  }
+  .tabs { display: flex; padding: 0 16px; gap: 8px; margin-bottom: 4px; }
   .tab-btn {
-    padding: 6px 16px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-family: var(--font);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all .2s;
+    padding: 6px 16px; border-radius: 20px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--muted); font-family: var(--font); font-size: 13px;
+    cursor: pointer; transition: all .2s;
   }
-  .tab-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-  }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  /* ── Job Count ── */
-  .job-count {
-    padding: 4px 16px 8px;
-    font-size: 12px;
-    color: var(--muted);
-  }
+  .job-count { padding: 4px 16px 8px; font-size: 12px; color: var(--muted); }
   .job-count span { color: var(--accent2); font-weight: 600; }
 
-  /* ── Job List ── */
-  .job-list {
-    padding: 0 16px 80px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
+  .job-list { padding: 0 16px 80px; display: flex; flex-direction: column; gap: 10px; }
 
   .job-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: flex;
-    align-items: stretch;
-    cursor: pointer;
-    transition: all .15s;
-    position: relative;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    display: flex; align-items: stretch;
+    cursor: pointer; transition: all .15s; position: relative;
   }
   .job-card:active { transform: scale(.985); }
   .job-card:hover { border-color: var(--accent); }
 
   .job-img {
-    width: 76px;
-    flex-shrink: 0;
-    background: #0d0f1a;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 76px; flex-shrink: 0;
+    background: #0d0f1a; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
   }
-  .job-img img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
-  .job-img .no-img {
-    font-size: 28px;
-    color: var(--border);
-  }
+  .job-img img { width: 100%; height: 100%; object-fit: cover; }
+  .job-img .no-img { font-size: 28px; color: var(--border); }
 
-  .job-body {
-    flex: 1;
-    padding: 10px 12px;
-    overflow: hidden;
-  }
+  .job-body { flex: 1; padding: 10px 12px; overflow: hidden; }
   .job-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 4px;
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 4px;
   }
-  .job-dept {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--accent2);
-    letter-spacing: .5px;
-  }
-  .job-badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: 500;
-  }
+  .job-dept { font-size: 15px; font-weight: 700; color: var(--accent2); letter-spacing: .5px; }
+  .job-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
   .badge-pending  { background: rgba(255,107,53,.15); color: var(--warn); border: 1px solid rgba(255,107,53,.3); }
   .badge-waiting  { background: rgba(59,126,255,.12); color: var(--accent); border: 1px solid rgba(59,126,255,.25); }
   .badge-empty    { background: rgba(122,130,160,.1); color: var(--muted); border: 1px solid var(--border); }
 
-  .job-detail {
-    font-size: 13px;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 3px;
-  }
-  .job-meta {
-    font-size: 11px;
-    color: var(--muted);
-  }
+  .job-detail { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .job-meta { font-size: 11px; color: var(--muted); }
 
-  /* ── Empty State ── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
   .empty-state p { font-size: 14px; }
 
-  /* ── Loading ── */
-  .loading-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    gap: 16px;
-  }
+  .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; gap: 16px; }
   .spinner {
     width: 36px; height: 36px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .8s linear infinite;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin .8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ═══════════════════════════════════════════
-     Detail / Close Job Page
-  ═══════════════════════════════════════════ */
-  .page {
-    display: none;
-    min-height: 100vh;
-    background: var(--bg);
-  }
+  .page { display: none; min-height: 100vh; background: var(--bg); }
   .page.active { display: block; }
 
   .detail-topbar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
   }
-  .back-btn {
-    background: none;
-    border: none;
-    color: var(--accent);
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px;
-    line-height: 1;
-  }
-  .detail-title {
-    flex: 1;
-    font-size: 16px;
-    font-weight: 600;
-  }
+  .back-btn { background: none; border: none; color: var(--accent); font-size: 20px; cursor: pointer; padding: 4px; line-height: 1; }
+  .detail-title { flex: 1; font-size: 16px; font-weight: 600; }
 
-  .detail-body {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    padding-bottom: 100px;
-  }
+  .detail-body { padding: 16px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 100px; }
 
-  /* ── Info Section ── */
-  .info-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .info-card-head {
-    padding: 8px 14px;
-    background: rgba(59,126,255,.08);
+    padding: 8px 14px; background: rgba(59,126,255,.08);
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: .5px;
-    text-transform: uppercase;
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    letter-spacing: .5px; text-transform: uppercase;
   }
-  .info-row {
-    display: flex;
-    padding: 8px 14px;
-    border-bottom: 1px solid rgba(46,51,80,.5);
-    gap: 8px;
-  }
+  .info-row { display: flex; padding: 8px 14px; border-bottom: 1px solid rgba(46,51,80,.5); gap: 8px; }
   .info-row:last-child { border-bottom: none; }
-  .info-label {
-    font-size: 12px;
-    color: var(--muted);
-    flex-shrink: 0;
-    width: 90px;
-  }
-  .info-val {
-    font-size: 13px;
-    color: var(--text);
-    flex: 1;
-    word-break: break-word;
-  }
-  .info-val.highlight {
-    color: var(--warn);
-    font-weight: 500;
-  }
+  .info-label { font-size: 12px; color: var(--muted); flex-shrink: 0; width: 90px; }
+  .info-val { font-size: 13px; color: var(--text); flex: 1; word-break: break-word; }
+  .info-val.highlight { color: var(--warn); font-weight: 500; }
 
-  /* ── Before image ── */
   .before-img-wrap {
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--card);
-    border: 1px solid var(--border);
-    aspect-ratio: 16/9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius); overflow: hidden;
+    background: var(--card); border: 1px solid var(--border);
+    aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center;
   }
-  .before-img-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
+  .before-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
   .before-img-wrap .no-img-lg {
-    font-size: 48px;
-    color: var(--border);
-    flex-direction: column;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 48px; color: var(--border);
+    flex-direction: column; display: flex; align-items: center; gap: 8px;
   }
-  .before-img-wrap .no-img-lg span {
-    font-size: 12px;
-    color: var(--muted);
-    font-family: var(--font);
-  }
+  .before-img-wrap .no-img-lg span { font-size: 12px; color: var(--muted); font-family: var(--font); }
 
-  /* ── Form Section ── */
-  .form-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
+  .form-section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .form-section-head {
-    padding: 8px 14px;
-    background: rgba(0,212,170,.07);
+    padding: 8px 14px; background: rgba(0,212,170,.07);
     border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent2);
-    letter-spacing: .5px;
-    text-transform: uppercase;
+    font-size: 12px; font-weight: 600; color: var(--accent2);
+    letter-spacing: .5px; text-transform: uppercase;
   }
   .form-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
 
-  .field-label {
-    display: block;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 5px;
-    font-weight: 500;
-  }
+  .field-label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
   .field-label .req { color: var(--danger); }
 
-  input[type="date"],
-  select,
-  textarea {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 14px;
-    outline: none;
-    transition: border .2s;
+  input[type="date"], select, textarea {
+    width: 100%; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; color: var(--text);
+    font-family: var(--font); font-size: 14px; outline: none; transition: border .2s;
     -webkit-appearance: none;
   }
-  input[type="date"]:focus,
-  select:focus,
-  textarea:focus { border-color: var(--accent); }
-
+  input[type="date"]:focus, select:focus, textarea:focus { border-color: var(--accent); }
   select option { background: var(--card); }
+  textarea { resize: vertical; min-height: 72px; }
 
-  textarea {
-    resize: vertical;
-    min-height: 72px;
-  }
-
-  /* ── Photo Upload ── */
   .photo-upload-area {
-    border: 2px dashed var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    transition: border .2s;
+    border: 2px dashed var(--border); border-radius: 10px;
+    padding: 16px; display: flex; flex-direction: column;
+    align-items: center; gap: 10px; cursor: pointer; transition: border .2s;
   }
   .photo-upload-area:hover { border-color: var(--accent2); }
   .photo-upload-area .pu-icon { font-size: 32px; }
-  .photo-upload-area .pu-text {
-    font-size: 12px;
-    color: var(--muted);
-    text-align: center;
-  }
+  .photo-upload-area .pu-text { font-size: 12px; color: var(--muted); text-align: center; }
 
-  .photo-btns {
-    display: flex;
-    gap: 8px;
-  }
+  .photo-btns { display: flex; gap: 8px; }
   .photo-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all .15s;
+    flex: 1; padding: 10px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); font-family: var(--font); font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .15s;
   }
   .photo-btn:hover { border-color: var(--accent2); color: var(--accent2); }
 
-  .preview-wrap {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 4/3;
-    background: var(--surface);
-  }
-  .preview-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-  }
+  .preview-wrap { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: var(--surface); }
+  .preview-wrap img { width: 100%; height: 100%; object-fit: cover; }
   .preview-del {
-    position: absolute;
-    top: 6px; right: 6px;
-    background: rgba(0,0,0,.7);
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 28px; height: 28px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(0,0,0,.7); color: #fff; border: none;
+    border-radius: 50%; width: 28px; height: 28px;
+    cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
   }
 
-  /* Hidden file inputs */
   #fileCamera, #fileGallery { display: none; }
 
-  /* ── Save Button ── */
   .save-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    padding: 12px 16px;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    z-index: 200;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    padding: 12px 16px; background: var(--surface);
+    border-top: 1px solid var(--border); z-index: 200;
   }
   .save-btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--font);
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    width: 100%; padding: 14px; border-radius: 10px; border: none;
+    background: var(--accent); color: #fff; font-family: var(--font);
+    font-size: 16px; font-weight: 600; cursor: pointer; transition: all .15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
   .save-btn:active { transform: scale(.97); }
   .save-btn:disabled { background: var(--border); cursor: not-allowed; }
   .save-btn.saving { background: var(--warn); animation: pulse-btn 1s infinite; }
   @keyframes pulse-btn { 0%,100%{opacity:1} 50%{opacity:.6} }
 
-  /* ── Toast ── */
   .toast {
-    position: fixed;
-    bottom: 90px;
-    left: 50%;
+    position: fixed; bottom: 90px; left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: var(--card);
-    color: var(--text);
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    opacity: 0;
-    transition: all .3s;
-    pointer-events: none;
-    z-index: 999;
-    white-space: nowrap;
+    background: var(--card); color: var(--text);
+    padding: 10px 20px; border-radius: 20px; font-size: 13px;
+    border: 1px solid var(--border); opacity: 0; transition: all .3s;
+    pointer-events: none; z-index: 999; white-space: nowrap;
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.success { border-color: var(--success); color: var(--success); }
   .toast.error   { border-color: var(--danger);  color: var(--danger); }
 
-  /* ── Sync overlay ── */
   .sync-banner {
-    display: none;
-    position: fixed;
+    display: none; position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,.75);
-    z-index: 500;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
+    background: rgba(0,0,0,.75); z-index: 500;
+    flex-direction: column; align-items: center; justify-content: center; gap: 20px;
   }
   .sync-banner.show { display: flex; }
-  .sync-banner .sync-txt {
-    font-size: 14px;
-    color: var(--muted);
+  .sync-banner .sync-txt { font-size: 14px; color: var(--muted); }
+  .sync-banner .sync-progress { width: 200px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .sync-progress-inner { height: 100%; background: var(--accent); width: 0%; transition: width .5s; border-radius: 2px; }
+
+  /* ── Error banner ── */
+  .error-banner {
+    margin: 12px 16px; padding: 12px 16px;
+    background: rgba(255,68,68,.1); border: 1px solid rgba(255,68,68,.3);
+    border-radius: 10px; font-size: 13px; color: var(--danger);
+    display: none;
   }
-  .sync-banner .sync-progress {
-    width: 200px;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .sync-progress-inner {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-    transition: width .5s;
-    border-radius: 2px;
-  }
+  .error-banner.show { display: block; }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════
-     PAGE 1 – Job List
-═══════════════════════════════════════════ -->
+<!-- ═══ PAGE 1 – Job List ═══ -->
 <div id="page-list" class="page active">
 
   <div class="topbar">
@@ -575,6 +271,8 @@
     <div class="status-led" id="statusLed" title="สถานะ sync"></div>
   </div>
 
+  <div class="error-banner" id="errorBanner"></div>
+
   <div class="search-wrap">
     <input class="search-box" type="search" id="searchInput"
            placeholder="🔍  ค้นหา DOC NO / สถานที่ / รายละเอียด..."
@@ -582,10 +280,10 @@
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tabAll" onclick="setTab('all')">ทั้งหมด</button>
-    <button class="tab-btn" id="tabPending" onclick="setTab('รับทราบ')">รับทราบ</button>
-    <button class="tab-btn" id="tabWait"    onclick="setTab('รอจัดซื้ออุปกรณ์')">รอจัดซื้อ</button>
-    <button class="tab-btn" id="tabEmpty"   onclick="setTab('empty')">ใหม่</button>
+    <button class="tab-btn active" id="tabAll"     onclick="setTab('all')">ทั้งหมด</button>
+    <button class="tab-btn"        id="tabPending" onclick="setTab('รับทราบ')">รับทราบ</button>
+    <button class="tab-btn"        id="tabWait"    onclick="setTab('รอจัดซื้ออุปกรณ์')">รอจัดซื้อ</button>
+    <button class="tab-btn"        id="tabEmpty"   onclick="setTab('empty')">ใหม่</button>
   </div>
 
   <div class="job-count" id="jobCount"></div>
@@ -597,9 +295,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PAGE 2 – Detail / Close Job
-═══════════════════════════════════════════ -->
+<!-- ═══ PAGE 2 – Detail / Close Job ═══ -->
 <div id="page-detail" class="page">
 
   <div class="detail-topbar">
@@ -610,60 +306,31 @@
 
   <div class="detail-body">
 
-    <!-- รูปก่อนซ่อม -->
     <div class="before-img-wrap" id="beforeImgWrap">
       <div class="no-img-lg">📷<span>ไม่มีรูปก่อนซ่อม</span></div>
     </div>
 
-    <!-- ข้อมูลงาน -->
     <div class="info-card">
       <div class="info-card-head">ข้อมูลการแจ้งซ่อม</div>
-      <div class="info-row">
-        <span class="info-label">DOC NO.</span>
-        <span class="info-val" id="dDocNo">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">วันที่แจ้ง</span>
-        <span class="info-val" id="dDateReport">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">แผนก</span>
-        <span class="info-val" id="dDept">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">ผู้แจ้ง</span>
-        <span class="info-val" id="dReporter">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">สถานที่</span>
-        <span class="info-val" id="dLocation">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">ประเภท</span>
-        <span class="info-val" id="dType">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">รายละเอียด</span>
-        <span class="info-val highlight" id="dDetail">–</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">สถานะปัจจุบัน</span>
-        <span class="info-val" id="dProgress">–</span>
-      </div>
+      <div class="info-row"><span class="info-label">DOC NO.</span><span class="info-val" id="dDocNo">–</span></div>
+      <div class="info-row"><span class="info-label">วันที่แจ้ง</span><span class="info-val" id="dDateReport">–</span></div>
+      <div class="info-row"><span class="info-label">แผนก</span><span class="info-val" id="dDept">–</span></div>
+      <div class="info-row"><span class="info-label">ผู้แจ้ง</span><span class="info-val" id="dReporter">–</span></div>
+      <div class="info-row"><span class="info-label">สถานที่</span><span class="info-val" id="dLocation">–</span></div>
+      <div class="info-row"><span class="info-label">ประเภท</span><span class="info-val" id="dType">–</span></div>
+      <div class="info-row"><span class="info-label">รายละเอียด</span><span class="info-val highlight" id="dDetail">–</span></div>
+      <div class="info-row"><span class="info-label">สถานะปัจจุบัน</span><span class="info-val" id="dProgress">–</span></div>
     </div>
 
-    <!-- ฟอร์มปิดงาน -->
     <div class="form-section">
       <div class="form-section-head">✏️  กรอกข้อมูลปิดงาน</div>
       <div class="form-body">
 
-        <!-- วันที่เสร็จ -->
         <div>
           <label class="field-label">วันที่เสร็จ <span class="req">*</span></label>
           <input type="date" id="fDateDone">
         </div>
 
-        <!-- ความคืบหน้า -->
         <div>
           <label class="field-label">ความคืบหน้า <span class="req">*</span></label>
           <select id="fProgress">
@@ -677,58 +344,38 @@
           </select>
         </div>
 
-        <!-- ผู้ซ่อมหลัก -->
         <div>
           <label class="field-label">ผู้ซ่อมหลัก</label>
           <select id="fTechMain">
             <option value="">— เลือกช่าง —</option>
-            <option>ช่างชัย</option>
-            <option>ช่างไฟว์</option>
-            <option>ช่างโอ</option>
-            <option>ช่างต้น</option>
-            <option>ช่างแลน</option>
-            <option>ช่างโบ้</option>
-            <option>ช่างเบียร์</option>
+            <option>ช่างชัย</option><option>ช่างไฟว์</option><option>ช่างโอ</option>
+            <option>ช่างต้น</option><option>ช่างแลน</option><option>ช่างโบ้</option><option>ช่างเบียร์</option>
           </select>
         </div>
 
-        <!-- ผู้ช่วย 1 -->
         <div>
           <label class="field-label">ผู้ช่วยคนที่ 1</label>
           <select id="fTech1">
             <option value="">— ไม่มี —</option>
-            <option>ช่างชัย</option>
-            <option>ช่างไฟว์</option>
-            <option>ช่างโอ</option>
-            <option>ช่างต้น</option>
-            <option>ช่างแลน</option>
-            <option>ช่างโบ้</option>
-            <option>ช่างเบียร์</option>
+            <option>ช่างชัย</option><option>ช่างไฟว์</option><option>ช่างโอ</option>
+            <option>ช่างต้น</option><option>ช่างแลน</option><option>ช่างโบ้</option><option>ช่างเบียร์</option>
           </select>
         </div>
 
-        <!-- ผู้ช่วย 2 -->
         <div>
           <label class="field-label">ผู้ช่วยคนที่ 2</label>
           <select id="fTech2">
             <option value="">— ไม่มี —</option>
-            <option>ช่างชัย</option>
-            <option>ช่างไฟว์</option>
-            <option>ช่างโอ</option>
-            <option>ช่างต้น</option>
-            <option>ช่างแลน</option>
-            <option>ช่างโบ้</option>
-            <option>ช่างเบียร์</option>
+            <option>ช่างชัย</option><option>ช่างไฟว์</option><option>ช่างโอ</option>
+            <option>ช่างต้น</option><option>ช่างแลน</option><option>ช่างโบ้</option><option>ช่างเบียร์</option>
           </select>
         </div>
 
-        <!-- คำแนะนำ -->
         <div>
           <label class="field-label">คำแนะนำในการดูแลจากช่าง</label>
           <textarea id="fAdvice" placeholder="บันทึกคำแนะนำ…"></textarea>
         </div>
 
-        <!-- รูปหลังซ่อม -->
         <div>
           <label class="field-label">รูปหลังซ่อม</label>
           <div id="photoPreviewWrap" style="display:none" class="preview-wrap">
@@ -739,15 +386,11 @@
             <div class="pu-icon">📷</div>
             <div class="pu-text">เลือกวิธีเพิ่มรูปหลังซ่อม</div>
             <div class="photo-btns">
-              <button class="photo-btn" onclick="openCamera()">
-                <span>📸</span> ถ่ายเลย
-              </button>
-              <button class="photo-btn" onclick="openGallery()">
-                <span>🖼️</span> เลือกรูป
-              </button>
+              <button class="photo-btn" onclick="openCamera()"><span>📸</span> ถ่ายเลย</button>
+              <button class="photo-btn" onclick="openGallery()"><span>🖼️</span> เลือกรูป</button>
             </div>
           </div>
-          <input type="file" id="fileCamera" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+          <input type="file" id="fileCamera"  accept="image/*" capture="environment" onchange="handlePhoto(this)">
           <input type="file" id="fileGallery" accept="image/*" onchange="handlePhoto(this)">
         </div>
 
@@ -756,16 +399,12 @@
   </div>
 
   <div class="save-bar">
-    <button class="save-btn" id="saveBtn" onclick="saveJob()">
-      💾 บันทึกปิดงาน
-    </button>
+    <button class="save-btn" id="saveBtn" onclick="saveJob()">💾 บันทึกปิดงาน</button>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<!-- Sync overlay (first load) -->
 <div class="sync-banner" id="syncBanner">
   <div class="spinner"></div>
   <div class="sync-txt" id="syncTxt">กำลังซิงค์ข้อมูลครั้งแรก…</div>
@@ -776,56 +415,97 @@
 
 <script>
 // ══════════════════════════════════════════
+//  CONFIG – เปลี่ยนตรงนี้เท่านั้น
+// ══════════════════════════════════════════
+var API_URL = 'https://script.google.com/macros/s/AKfycbymxipvYzg63XJ6uzG37GO-CyGCt88bN2C1b_AAcafvHOOybjNGLvqeCIVdbDDxjcPd/exec';
+
+// ══════════════════════════════════════════
+//  แปลง Google Drive URL → ลิงก์รูปตรง
+//  รองรับหลาย format:
+//    https://drive.google.com/uc?export=view&id=FILE_ID
+//    https://drive.google.com/file/d/FILE_ID/view
+//    https://lh3.googleusercontent.com/d/FILE_ID  (ใช้ได้แล้ว ไม่ต้องแปลง)
+// ══════════════════════════════════════════
+function fixDriveUrl(url) {
+  if (!url || url.trim() === '') return '';
+  url = url.trim();
+
+  // ถ้าเป็น lh3 อยู่แล้ว → ใช้เลย
+  if (url.indexOf('lh3.googleusercontent.com') !== -1) return url;
+
+  var fileId = null;
+
+  // format: ?id=FILE_ID หรือ &id=FILE_ID
+  var m1 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m1) fileId = m1[1];
+
+  // format: /file/d/FILE_ID/
+  if (!fileId) {
+    var m2 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (m2) fileId = m2[1];
+  }
+
+  if (fileId) {
+    // ใช้ thumbnail API ซึ่งไม่ block CORS
+    return 'https://lh3.googleusercontent.com/d/' + fileId;
+  }
+
+  return url; // คืนเดิมถ้าแปลงไม่ได้
+}
+
+// ══════════════════════════════════════════
 //  State
 // ══════════════════════════════════════════
-var allJobs     = [];
+var allJobs      = [];
 var filteredJobs = [];
-var currentJob  = null;
-var currentTab  = 'all';
-var photoData   = null;   // { base64, mime }
-var isSyncing   = false;
-var saveQueue   = null;   // payload รอบันทึก
+var currentJob   = null;
+var currentTab   = 'all';
+var photoData    = null;
 
-var CACHE_KEY   = 'mj_closejob_cache_v2';
-var CACHE_TS    = 'mj_closejob_ts';
+var CACHE_KEY = 'mj_closejob_cache_v2';
+var CACHE_TS  = 'mj_closejob_ts';
 
 // ══════════════════════════════════════════
 //  Init
 // ══════════════════════════════════════════
 window.onload = function() {
   setLed('syncing');
-  var cached = loadCache();
-  if (cached && cached.length > 0) {
-    allJobs = cached;
-    renderList();
-    // sync ใน background
-    syncData(false);
-  } else {
-    // ครั้งแรก – แสดง overlay
-    document.getElementById('syncBanner').classList.add('show');
-    syncData(true);
-  }
-  // วันที่วันนี้ใส่ default
   var today = new Date();
   var yy = today.getFullYear();
   var mm = String(today.getMonth()+1).padStart(2,'0');
   var dd = String(today.getDate()).padStart(2,'0');
   document.getElementById('fDateDone').value = yy+'-'+mm+'-'+dd;
+
+  var cached = loadCache();
+  if (cached && cached.length > 0) {
+    allJobs = cached;
+    filterJobs();
+    syncData(false);
+  } else {
+    document.getElementById('syncBanner').classList.add('show');
+    syncData(true);
+  }
 };
 
 // ══════════════════════════════════════════
-//  Sync / Load data
+//  Sync – เรียก AppScript ผ่าน fetch (CORS)
 // ══════════════════════════════════════════
 function syncData(isFirst) {
-  isSyncing = true;
   setLed('syncing');
   if (isFirst) updateSyncProgress(20);
 
-  google.script.run
-    .withSuccessHandler(function(res) {
-      isSyncing = false;
+  fetch(API_URL + '?action=getPendingJobs', { method: 'GET' })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(res) {
       if (res.ok) {
-        allJobs = res.jobs;
+        // แปลง URL รูปทุกรายการ
+        allJobs = res.jobs.map(function(j) {
+          j.imgBeforeUrl = fixDriveUrl(j.imgBeforeUrl || '');
+          return j;
+        });
         saveCache(allJobs);
         if (isFirst) {
           updateSyncProgress(100);
@@ -833,56 +513,53 @@ function syncData(isFirst) {
             document.getElementById('syncBanner').classList.remove('show');
           }, 500);
         }
-        renderList();
+        filterJobs();
         setLed('ok');
+        hideError();
       } else {
-        setLed('ok');
-        if (isFirst) document.getElementById('syncBanner').classList.remove('show');
-        showToast('⚠️ โหลดข้อมูลล้มเหลว: ' + res.msg, 'error');
+        throw new Error(res.msg || 'unknown error');
       }
     })
-    .withFailureHandler(function(err) {
-      isSyncing = false;
+    .catch(function(err) {
       setLed('ok');
       if (isFirst) document.getElementById('syncBanner').classList.remove('show');
-      showToast('❌ ไม่สามารถเชื่อมต่อได้', 'error');
-    })
-    .getPendingJobs();
+      showError('⚠️ โหลดข้อมูลไม่สำเร็จ: ' + err.message);
+      showToast('❌ ' + err.message, 'error');
+    });
 }
 
 function updateSyncProgress(pct) {
   document.getElementById('syncProgressBar').style.width = pct + '%';
-  var txt = pct < 50 ? 'กำลังดึงข้อมูล…'
-          : pct < 90 ? 'กำลังประมวลผล…'
-          : 'เสร็จแล้ว!';
-  document.getElementById('syncTxt').textContent = txt;
+  document.getElementById('syncTxt').textContent =
+    pct < 50 ? 'กำลังดึงข้อมูล…' : pct < 90 ? 'กำลังประมวลผล…' : 'เสร็จแล้ว!';
 }
 
 // ══════════════════════════════════════════
-//  Cache (localStorage)
+//  Cache
 // ══════════════════════════════════════════
 function saveCache(jobs) {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify(jobs));
-    localStorage.setItem(CACHE_TS, Date.now());
-  } catch(e) {}
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(jobs)); localStorage.setItem(CACHE_TS, Date.now()); } catch(e) {}
 }
 function loadCache() {
-  try {
-    var d = localStorage.getItem(CACHE_KEY);
-    return d ? JSON.parse(d) : null;
-  } catch(e) { return null; }
+  try { var d = localStorage.getItem(CACHE_KEY); return d ? JSON.parse(d) : null; } catch(e) { return null; }
 }
 
 // ══════════════════════════════════════════
-//  LED
+//  LED / Error
 // ══════════════════════════════════════════
 function setLed(state) {
-  var leds = [document.getElementById('statusLed'), document.getElementById('statusLed2')];
-  leds.forEach(function(l) {
+  ['statusLed','statusLed2'].forEach(function(id) {
+    var l = document.getElementById(id);
     if (!l) return;
-    l.className = 'status-led' + (state === 'syncing' ? ' syncing' : state === 'ok' ? ' ok' : '');
+    l.className = 'status-led' + (state==='syncing' ? ' syncing' : state==='ok' ? ' ok' : '');
   });
+}
+function showError(msg) {
+  var el = document.getElementById('errorBanner');
+  el.textContent = msg; el.classList.add('show');
+}
+function hideError() {
+  document.getElementById('errorBanner').classList.remove('show');
 }
 
 // ══════════════════════════════════════════
@@ -904,19 +581,16 @@ function filterJobs() {
   var kw = document.getElementById('searchInput').value.trim().toLowerCase();
 
   filteredJobs = allJobs.filter(function(j) {
-    // tab filter
-    if (currentTab === 'รับทราบ' && j.progress !== 'รับทราบ') return false;
+    if (currentTab === 'รับทราบ'         && j.progress !== 'รับทราบ')         return false;
     if (currentTab === 'รอจัดซื้ออุปกรณ์' && j.progress !== 'รอจัดซื้ออุปกรณ์') return false;
-    if (currentTab === 'empty' && j.progress !== '') return false;
-
-    // keyword
+    if (currentTab === 'empty'            && j.progress !== '')               return false;
     if (!kw) return true;
     return (
-      j.docNo.toLowerCase().includes(kw) ||
-      j.location.toLowerCase().includes(kw) ||
-      j.detail.toLowerCase().includes(kw) ||
-      j.dept.toLowerCase().includes(kw) ||
-      j.reporter.toLowerCase().includes(kw)
+      (j.docNo      || '').toLowerCase().includes(kw) ||
+      (j.location   || '').toLowerCase().includes(kw) ||
+      (j.detail     || '').toLowerCase().includes(kw) ||
+      (j.dept       || '').toLowerCase().includes(kw) ||
+      (j.reporter   || '').toLowerCase().includes(kw)
     );
   });
 
@@ -925,7 +599,6 @@ function filterJobs() {
 
 function renderList() {
   var el = document.getElementById('jobList');
-  filterJobs2();
 
   if (filteredJobs.length === 0) {
     el.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>ไม่พบงานที่ตรงกัน</p></div>';
@@ -933,17 +606,16 @@ function renderList() {
     return;
   }
 
-  document.getElementById('jobCount').innerHTML =
-    'พบ <span>' + filteredJobs.length + '</span> รายการ';
+  document.getElementById('jobCount').innerHTML = 'พบ <span>' + filteredJobs.length + '</span> รายการ';
 
   el.innerHTML = filteredJobs.map(function(j, idx) {
-    var badgeCls = j.progress === 'รับทราบ' ? 'badge-pending'
+    var badgeCls = j.progress === 'รับทราบ'         ? 'badge-pending'
                  : j.progress === 'รอจัดซื้ออุปกรณ์' ? 'badge-waiting'
                  : 'badge-empty';
     var badgeTxt = j.progress || 'ใหม่';
 
     var imgHtml = j.imgBeforeUrl
-      ? '<img src="' + escHtml(j.imgBeforeUrl) + '" onerror="this.parentElement.innerHTML=\'<span class=no-img>📷</span>\'">'
+      ? '<img src="' + escHtml(j.imgBeforeUrl) + '" loading="lazy" onerror="this.parentElement.innerHTML=\'<span class=no-img>📷</span>\'">'
       : '<span class="no-img">📷</span>';
 
     return '<div class="job-card" onclick="openDetail(' + idx + ')">' +
@@ -960,24 +632,6 @@ function renderList() {
   }).join('');
 }
 
-// ต้องเรียกก่อน render เพื่อแก้ bug ที่ filterJobs เรียก renderList เรียก filterJobs2
-function filterJobs2() {
-  var kw = document.getElementById('searchInput').value.trim().toLowerCase();
-  filteredJobs = allJobs.filter(function(j) {
-    if (currentTab === 'รับทราบ' && j.progress !== 'รับทราบ') return false;
-    if (currentTab === 'รอจัดซื้ออุปกรณ์' && j.progress !== 'รอจัดซื้ออุปกรณ์') return false;
-    if (currentTab === 'empty' && j.progress !== '') return false;
-    if (!kw) return true;
-    return (
-      j.docNo.toLowerCase().includes(kw) ||
-      j.location.toLowerCase().includes(kw) ||
-      j.detail.toLowerCase().includes(kw) ||
-      j.dept.toLowerCase().includes(kw) ||
-      j.reporter.toLowerCase().includes(kw)
-    );
-  });
-}
-
 // ══════════════════════════════════════════
 //  Open Detail
 // ══════════════════════════════════════════
@@ -985,7 +639,6 @@ function openDetail(idx) {
   currentJob = filteredJobs[idx];
   var j = currentJob;
 
-  // fill info
   document.getElementById('detailTitle').textContent = j.dept + ' – ' + j.location;
   document.getElementById('dDocNo').textContent      = j.docNo;
   document.getElementById('dDateReport').textContent = j.dateReport;
@@ -996,7 +649,7 @@ function openDetail(idx) {
   document.getElementById('dDetail').textContent     = j.detail;
   document.getElementById('dProgress').textContent   = j.progress || '(ใหม่)';
 
-  // รูปก่อนซ่อม จากคอลัม AN
+  // รูปก่อนซ่อม – URL ถูกแปลงแล้วตอน sync
   var wrap = document.getElementById('beforeImgWrap');
   if (j.imgBeforeUrl) {
     wrap.innerHTML = '<img src="' + escHtml(j.imgBeforeUrl) +
@@ -1005,16 +658,12 @@ function openDetail(idx) {
     wrap.innerHTML = '<div class="no-img-lg">📷<span>ไม่มีรูปก่อนซ่อม</span></div>';
   }
 
-  // pre-fill ช่าง
   document.getElementById('fTechMain').value = j.techMain || '';
   document.getElementById('fTech1').value    = j.tech1    || '';
   document.getElementById('fTech2').value    = j.tech2    || '';
   document.getElementById('fAdvice').value   = '';
-
-  // clear photo
   clearPhoto();
 
-  // show page
   document.getElementById('page-list').classList.remove('active');
   document.getElementById('page-detail').classList.add('active');
   window.scrollTo(0,0);
@@ -1034,20 +683,41 @@ function openGallery() { document.getElementById('fileGallery').click(); }
 function handlePhoto(input) {
   var file = input.files[0];
   if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var dataUrl = e.target.result;
-    // แสดง preview
-    document.getElementById('photoPreview').src = dataUrl;
-    document.getElementById('photoPreviewWrap').style.display = 'block';
-    document.getElementById('photoUploadArea').style.display  = 'none';
-    // เก็บ base64 (ตัด prefix)
-    var parts = dataUrl.split(',');
-    var mime  = parts[0].match(/:(.*?);/)[1];
-    photoData = { base64: parts[1], mime: mime };
+  // compress ก่อนถ้าไฟล์ใหญ่เกิน 2MB
+  if (file.size > 2 * 1024 * 1024) {
+    compressImage(file, 0.7, function(dataUrl) { applyPhoto(dataUrl); });
+  } else {
+    var reader = new FileReader();
+    reader.onload = function(e) { applyPhoto(e.target.result); };
+    reader.readAsDataURL(file);
+  }
+  input.value = '';
+}
+
+function applyPhoto(dataUrl) {
+  document.getElementById('photoPreview').src = dataUrl;
+  document.getElementById('photoPreviewWrap').style.display = 'block';
+  document.getElementById('photoUploadArea').style.display  = 'none';
+  var parts = dataUrl.split(',');
+  var mime  = parts[0].match(/:(.*?);/)[1];
+  photoData = { base64: parts[1], mime: mime };
+}
+
+function compressImage(file, quality, cb) {
+  var img = new Image();
+  var url = URL.createObjectURL(file);
+  img.onload = function() {
+    var maxW = 1280, maxH = 960;
+    var w = img.width, h = img.height;
+    if (w > maxW) { h = h * maxW / w; w = maxW; }
+    if (h > maxH) { w = w * maxH / h; h = maxH; }
+    var canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    cb(canvas.toDataURL('image/jpeg', quality));
+    URL.revokeObjectURL(url);
   };
-  reader.readAsDataURL(file);
-  input.value = ''; // reset
+  img.src = url;
 }
 
 function clearPhoto() {
@@ -1058,7 +728,7 @@ function clearPhoto() {
 }
 
 // ══════════════════════════════════════════
-//  Save Job
+//  Save Job – ส่งผ่าน fetch POST
 // ══════════════════════════════════════════
 function saveJob() {
   var progress = document.getElementById('fProgress').value;
@@ -1068,6 +738,7 @@ function saveJob() {
   if (!dateDone) { showToast('⚠️ กรุณาเลือกวันที่เสร็จ', 'error'); return; }
 
   var payload = {
+    action   : 'saveJob',
     rowNum   : currentJob.rowNum,
     docNo    : currentJob.docNo,
     dateDone : dateDone,
@@ -1080,47 +751,46 @@ function saveJob() {
     imgMime  : photoData ? photoData.mime   : ''
   };
 
-  // ── ไปหน้าแรกทันที ──
+  // กลับหน้าแรกทันที
   goList();
 
-  // ── ถ้า "ดำเนินการเรียบร้อย" หรือ "ติดต่อช่างนอก , ดำเนินการเรียบร้อย" → ลบออกจาก list ─
+  // อัพเดท cache ทันที
   var closedStatuses = ['ดำเนินการเรียบร้อย', 'ติดต่อช่างนอก , ดำเนินการเรียบร้อย', 'ยกเลิกการซ่อม'];
   if (closedStatuses.indexOf(progress) !== -1) {
     allJobs = allJobs.filter(function(j) { return j.rowNum !== currentJob.rowNum; });
-    saveCache(allJobs);
   } else {
-    // อัพเดทสถานะใน cache
     allJobs = allJobs.map(function(j) {
-      if (j.rowNum === currentJob.rowNum) {
-        j.progress = progress;
-      }
+      if (j.rowNum === currentJob.rowNum) j.progress = progress;
       return j;
     });
-    saveCache(allJobs);
   }
-  renderList();
+  saveCache(allJobs);
   filterJobs();
 
-  // ── บันทึก background ──
   setLed('syncing');
   showToast('⏳ กำลังบันทึก…', '');
 
-  google.script.run
-    .withSuccessHandler(function(res) {
-      if (res.ok) {
-        showToast('✅ บันทึกสำเร็จ!', 'success');
-        // sync ใหม่เพื่ออัพเดทข้อมูล
-        syncData(false);
-      } else {
-        showToast('❌ บันทึกล้มเหลว: ' + res.msg, 'error');
-        setLed('ok');
-      }
-    })
-    .withFailureHandler(function(err) {
-      showToast('❌ เชื่อมต่อล้มเหลว', 'error');
-      setLed('ok');
-    })
-    .saveJob(payload);
+  fetch(API_URL, {
+    method : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body   : JSON.stringify(payload)
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
+  .then(function(res) {
+    if (res.ok) {
+      showToast('✅ บันทึกสำเร็จ!', 'success');
+      syncData(false);
+    } else {
+      throw new Error(res.msg || 'บันทึกล้มเหลว');
+    }
+  })
+  .catch(function(err) {
+    showToast('❌ ' + err.message, 'error');
+    setLed('ok');
+  });
 }
 
 // ══════════════════════════════════════════
@@ -1131,53 +801,14 @@ function showToast(msg, type) {
   el.textContent = msg;
   el.className   = 'toast show ' + (type || '');
   clearTimeout(el._t);
-  el._t = setTimeout(function() { el.className = 'toast'; }, 3000);
+  el._t = setTimeout(function() { el.className = 'toast'; }, 3500);
 }
 
 function escHtml(s) {
   return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-// Prevent filterJobs ↔ renderList ↔ filterJobs loop
-// เปลี่ยน filterJobs ให้เรียก filterJobs2 แล้ว render
-(function(){
-  var orig = window.filterJobs;
-  window.filterJobs = function() {
-    filterJobs2();
-    // render โดยตรง ไม่เรียก renderList ที่เรียก filterJobs2 อีก
-    var el = document.getElementById('jobList');
-    if (filteredJobs.length === 0) {
-      el.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>ไม่พบงานที่ตรงกัน</p></div>';
-      document.getElementById('jobCount').innerHTML = 'ไม่พบรายการ';
-      return;
-    }
-    document.getElementById('jobCount').innerHTML =
-      'พบ <span>' + filteredJobs.length + '</span> รายการ';
-
-    el.innerHTML = filteredJobs.map(function(j, idx) {
-      var badgeCls = j.progress === 'รับทราบ' ? 'badge-pending'
-                   : j.progress === 'รอจัดซื้ออุปกรณ์' ? 'badge-waiting'
-                   : 'badge-empty';
-      var badgeTxt = j.progress || 'ใหม่';
-      var imgHtml = j.imgBeforeUrl
-        ? '<img src="' + escHtml(j.imgBeforeUrl) + '" onerror="this.parentElement.innerHTML=\'<span class=no-img>📷</span>\'">'
-        : '<span class="no-img">📷</span>';
-      return '<div class="job-card" onclick="openDetail(' + idx + ')">' +
-        '<div class="job-img">' + imgHtml + '</div>' +
-        '<div class="job-body">' +
-          '<div class="job-header">' +
-            '<span class="job-dept">' + escHtml(j.dept) + '</span>' +
-            '<span class="job-badge ' + badgeCls + '">' + escHtml(badgeTxt) + '</span>' +
-          '</div>' +
-          '<div class="job-detail">' + escHtml(j.detail || j.location) + '</div>' +
-          '<div class="job-meta">#' + escHtml(j.docNo) + ' · ' + escHtml(j.location) + ' · ' + escHtml(j.dateReport) + '</div>' +
-        '</div>' +
-      '</div>';
-    }).join('');
-  };
-})();
 </script>
 </body>
 </html>
