@@ -1,282 +1,1183 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1A3A5C">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>มณีจันทร์ - ระบบช่าง</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ปิดงานแจ้งซ่อม</title>
+<style>
+  /* ── Variables ── */
+  :root {
+    --bg:      #0f1117;
+    --surface: #1a1d27;
+    --card:    #21253a;
+    --border:  #2e3350;
+    --accent:  #3b7eff;
+    --accent2: #00d4aa;
+    --warn:    #ff6b35;
+    --danger:  #ff4444;
+    --text:    #e8ecf4;
+    --muted:   #7a82a0;
+    --success: #22c55e;
+    --radius:  12px;
+    --font:    'Sarabun', sans-serif;
+  }
 
-  <!-- ========= CONFIG =========
-    แก้ URL ด้านล่างหลังจาก Deploy Google Apps Script แล้ว
-    ============================================ -->
-  <script>
-    window.APP_CONFIG = {
-      apiUrl: 'https://script.google.com/macros/s/AKfycbyHTO_esKC2SHOijHu6KtC5jwdpMhrGfjJsZnEmYdsru8bgVKBj-9W18HmElRUbjvSz/exec'
-    };
-  </script>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Google Font ── */
+  @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+  /* ── Top Bar ── */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-title {
+    flex: 1;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .topbar-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* ── Status LED ── */
+  .status-led {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+    transition: background .3s;
+  }
+  .status-led.syncing {
+    background: var(--danger);
+    animation: blink .7s infinite;
+  }
+  .status-led.ok { background: var(--success); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  /* ── Search bar ── */
+  .search-wrap {
+    padding: 12px 16px 8px;
+  }
+  .search-box {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    outline: none;
+    transition: border .2s;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--muted); }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    padding: 0 16px;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .tab-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── Job Count ── */
+  .job-count {
+    padding: 4px 16px 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .job-count span { color: var(--accent2); font-weight: 600; }
+
+  /* ── Job List ── */
+  .job-list {
+    padding: 0 16px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .job-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+  }
+  .job-card:active { transform: scale(.985); }
+  .job-card:hover { border-color: var(--accent); }
+
+  .job-img {
+    width: 76px;
+    flex-shrink: 0;
+    background: #0d0f1a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .job-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .job-img .no-img {
+    font-size: 28px;
+    color: var(--border);
+  }
+
+  .job-body {
+    flex: 1;
+    padding: 10px 12px;
+    overflow: hidden;
+  }
+  .job-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .job-dept {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: .5px;
+  }
+  .job-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+  }
+  .badge-pending  { background: rgba(255,107,53,.15); color: var(--warn); border: 1px solid rgba(255,107,53,.3); }
+  .badge-waiting  { background: rgba(59,126,255,.12); color: var(--accent); border: 1px solid rgba(59,126,255,.25); }
+  .badge-empty    { background: rgba(122,130,160,.1); color: var(--muted); border: 1px solid var(--border); }
+
+  .job-detail {
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .job-meta {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── Empty State ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ── Loading ── */
+  .loading-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ═══════════════════════════════════════════
+     Detail / Close Job Page
+  ═══════════════════════════════════════════ */
+  .page {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+  .page.active { display: block; }
+
+  .detail-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+  .detail-title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .detail-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: 100px;
+  }
+
+  /* ── Info Section ── */
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .info-card-head {
+    padding: 8px 14px;
+    background: rgba(59,126,255,.08);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .info-row {
+    display: flex;
+    padding: 8px 14px;
+    border-bottom: 1px solid rgba(46,51,80,.5);
+    gap: 8px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label {
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 90px;
+  }
+  .info-val {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+    word-break: break-word;
+  }
+  .info-val.highlight {
+    color: var(--warn);
+    font-weight: 500;
+  }
+
+  /* ── Before image ── */
+  .before-img-wrap {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--border);
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .before-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .before-img-wrap .no-img-lg {
+    font-size: 48px;
+    color: var(--border);
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .before-img-wrap .no-img-lg span {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--font);
+  }
+
+  /* ── Form Section ── */
+  .form-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .form-section-head {
+    padding: 8px 14px;
+    background: rgba(0,212,170,.07);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent2);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+  .form-body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+
+  .field-label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  .field-label .req { color: var(--danger); }
+
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    outline: none;
+    transition: border .2s;
+    -webkit-appearance: none;
+  }
+  input[type="date"]:focus,
+  select:focus,
+  textarea:focus { border-color: var(--accent); }
+
+  select option { background: var(--card); }
+
+  textarea {
+    resize: vertical;
+    min-height: 72px;
+  }
+
+  /* ── Photo Upload ── */
+  .photo-upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: border .2s;
+  }
+  .photo-upload-area:hover { border-color: var(--accent2); }
+  .photo-upload-area .pu-icon { font-size: 32px; }
+  .photo-upload-area .pu-text {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .photo-btns {
+    display: flex;
+    gap: 8px;
+  }
+  .photo-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .photo-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .preview-wrap {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: var(--surface);
+  }
+  .preview-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .preview-del {
+    position: absolute;
+    top: 6px; right: 6px;
+    background: rgba(0,0,0,.7);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Hidden file inputs */
+  #fileCamera, #fileGallery { display: none; }
+
+  /* ── Save Button ── */
+  .save-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 12px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    z-index: 200;
+  }
+  .save-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .save-btn:active { transform: scale(.97); }
+  .save-btn:disabled { background: var(--border); cursor: not-allowed; }
+  .save-btn.saving { background: var(--warn); animation: pulse-btn 1s infinite; }
+  @keyframes pulse-btn { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--card);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    opacity: 0;
+    transition: all .3s;
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error   { border-color: var(--danger);  color: var(--danger); }
+
+  /* ── Sync overlay ── */
+  .sync-banner {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.75);
+    z-index: 500;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+  .sync-banner.show { display: flex; }
+  .sync-banner .sync-txt {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .sync-banner .sync-progress {
+    width: 200px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .sync-progress-inner {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width .5s;
+    border-radius: 2px;
+  }
+</style>
 </head>
 <body>
 
-<div id="app">
+<!-- ═══════════════════════════════════════════
+     PAGE 1 – Job List
+═══════════════════════════════════════════ -->
+<div id="page-list" class="page active">
 
-  <!-- ============ LOGIN PAGE ============ -->
-  <div id="page-login" class="page active" style="min-height:100vh;display:flex;flex-direction:column;">
-    <div class="login-hero">
-      <div class="login-logo">🏨</div>
-      <div class="login-title">มณีจันทร์รีสอร์ท</div>
-      <div class="login-subtitle">ระบบบริหารงานช่าง</div>
+  <div class="topbar">
+    <div style="flex:1">
+      <div class="topbar-title">🔧 ปิดงานแจ้งซ่อม</div>
+      <div class="topbar-sub">มณีจันทร์รีสอร์ท</div>
     </div>
-
-    <div class="login-section" style="flex:1;overflow-y:auto;">
-      <!-- Technician Section -->
-      <div class="section-label">เข้าสู่ระบบ — ช่างทั่วไป</div>
-      <div id="tech-grid" class="tech-grid">
-        <div style="color:var(--text-muted);text-align:center;padding:20px;grid-column:span 2">กำลังโหลด...</div>
-      </div>
-
-      <!-- Admin Section -->
-      <div class="admin-section">
-        <div class="section-label">ผู้ดูแลระบบ / หัวหน้าช่าง / ผู้จัดการ</div>
-        <select id="admin-select" class="admin-select">
-          <option value="">-- เลือกผู้ใช้งาน --</option>
-        </select>
-        <input type="password" id="admin-password" class="password-input" placeholder="รหัสผ่าน">
-        <button class="btn btn-secondary btn-full" onclick="loginAsAdmin()">
-          🔐 เข้าสู่ระบบ
-        </button>
-      </div>
-    </div>
+    <div class="status-led" id="statusLed" title="สถานะ sync"></div>
   </div>
 
-  <!-- ============ SHIFT SELECT PAGE ============ -->
-  <div id="page-shift" class="page">
-    <div class="app-header">
-      <div class="logo">
-        <div class="logo-icon">🏨</div>
-        <span>มณีจันทร์</span>
-      </div>
-    </div>
-
-    <div class="shift-selector page-content">
-      <div id="shift-greeting" class="shift-greeting">สวัสดี 👋</div>
-      <div id="shift-date" class="shift-date"></div>
-      <div class="section-label">เลือกกะการทำงาน</div>
-      <div id="shift-options" class="shift-options"></div>
-    </div>
+  <div class="search-wrap">
+    <input class="search-box" type="search" id="searchInput"
+           placeholder="🔍  ค้นหา DOC NO / สถานที่ / รายละเอียด..."
+           oninput="filterJobs()">
   </div>
 
-  <!-- ============ MAIN PAGE ============ -->
-  <div id="page-main" class="page" style="flex-direction:column;">
-
-    <!-- Header -->
-    <div class="app-header">
-      <div class="logo">
-        <div class="logo-icon">🏨</div>
-        <div>
-          <div style="font-size:13px;font-weight:700">มณีจันทร์รีสอร์ท</div>
-          <div id="header-shift" style="font-size:10px;opacity:0.6"></div>
-        </div>
-      </div>
-      <div>
-        <div class="user-name" id="header-username"></div>
-        <div class="user-info" id="header-role"></div>
-      </div>
-    </div>
-
-    <!-- Content Tabs -->
-    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;">
-
-      <!-- ROUTINE TAB -->
-      <div class="main-tab-content page-content" data-tab="routine">
-        <div id="routine-content">
-          <!-- Rendered by JS -->
-        </div>
-      </div>
-
-      <!-- REPAIR TAB -->
-      <div class="main-tab-content page-content hidden" data-tab="repair">
-        <!-- Stats -->
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-num" id="stat-total">-</div>
-            <div class="stat-label">งานทั้งหมด</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num" id="stat-acknowledged" style="color:var(--info)">-</div>
-            <div class="stat-label">รับทราบ</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num" id="stat-purchasing" style="color:var(--warning)">-</div>
-            <div class="stat-label">รอจัดซื้อ</div>
-          </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="repair-filters">
-          <button class="filter-btn active" data-filter="all" onclick="loadRepairJobs('all')">ทั้งหมด</button>
-          <button class="filter-btn" data-filter="ว่างเปล่า" onclick="loadRepairJobs('ว่างเปล่า')">ใหม่</button>
-          <button class="filter-btn" data-filter="รับทราบ" onclick="loadRepairJobs('รับทราบ')">รับทราบ</button>
-          <button class="filter-btn" data-filter="รอจัดซื้ออุปกรณ์" onclick="loadRepairJobs('รอจัดซื้ออุปกรณ์')">รอจัดซื้อ</button>
-        </div>
-
-        <!-- Job list -->
-        <div id="repair-list">
-          <div class="empty-state">
-            <div class="empty-icon">⏳</div>
-            <div class="empty-text">กำลังโหลด...</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROFILE TAB -->
-      <div class="main-tab-content page-content hidden" data-tab="profile">
-        <div style="text-align:center;padding:24px 0;">
-          <div style="font-size:60px;margin-bottom:12px">👷</div>
-          <div style="font-size:20px;font-weight:700" id="profile-name"></div>
-          <div style="font-size:13px;color:var(--text-muted)" id="profile-role"></div>
-        </div>
-        <div class="card">
-          <div class="card-body">
-            <div class="detail-row">
-              <span class="label">กะปัจจุบัน</span>
-              <span class="value" id="profile-shift">-</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">วันที่</span>
-              <span class="value" id="profile-date">-</span>
-            </div>
-          </div>
-        </div>
-        <button class="btn btn-ghost btn-full mt-16" onclick="setNavPage('routine'); initRoutinePage(state.currentShift)">
-          🔄 ดูลูทีนอีกครั้ง
-        </button>
-        <button class="btn btn-danger btn-full mt-8" onclick="logout()">
-          🚪 ออกจากระบบ
-        </button>
-      </div>
-
-    </div><!-- end content tabs -->
-
-    <!-- Bottom Nav -->
-    <nav class="bottom-nav">
-      <button class="nav-btn active" data-page="routine" onclick="handleNavClick('routine')">
-        <span class="nav-icon">📋</span>
-        <span>ลูทีน</span>
-      </button>
-      <button class="nav-btn" data-page="repair" onclick="handleNavClick('repair')">
-        <span class="nav-icon">🔧</span>
-        <span>งานซ่อม</span>
-      </button>
-      <button class="nav-btn" data-page="profile" onclick="handleNavClick('profile')">
-        <span class="nav-icon">👤</span>
-        <span>โปรไฟล์</span>
-      </button>
-    </nav>
+  <div class="tabs">
+    <button class="tab-btn active" id="tabAll" onclick="setTab('all')">ทั้งหมด</button>
+    <button class="tab-btn" id="tabPending" onclick="setTab('รับทราบ')">รับทราบ</button>
+    <button class="tab-btn" id="tabWait"    onclick="setTab('รอจัดซื้ออุปกรณ์')">รอจัดซื้อ</button>
+    <button class="tab-btn" id="tabEmpty"   onclick="setTab('empty')">ใหม่</button>
   </div>
 
-  <!-- ============ JOB DETAIL PAGE ============ -->
-  <div id="page-job-detail" class="page" style="flex-direction:column;overflow-y:auto;">
-    <!-- Before image -->
-    <div class="detail-image-section" id="detail-before-img">
-      <div class="detail-image-placeholder">🔧</div>
+  <div class="job-count" id="jobCount"></div>
+  <div class="job-list"  id="jobList">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <span style="font-size:13px;color:var(--muted)">กำลังโหลดข้อมูล…</span>
     </div>
-    <button class="detail-back-btn" onclick="showPage('main')">←</button>
-
-    <div class="detail-content">
-      <!-- Job info -->
-      <div id="detail-location" class="detail-title">-</div>
-      <div id="detail-detail" class="detail-sub">-</div>
-
-      <div class="detail-row"><span class="label">แผนก</span><span class="value" id="detail-dept">-</span></div>
-      <div class="detail-row"><span class="label">ผู้แจ้ง</span><span class="value" id="detail-reporter">-</span></div>
-      <div class="detail-row"><span class="label">วันที่แจ้ง</span><span class="value" id="detail-date">-</span></div>
-      <div class="detail-row"><span class="label">ประเภท</span><span class="value" id="detail-type">-</span></div>
-      <div class="detail-row"><span class="label">ความคืบหน้า</span><span class="value" id="detail-progress">-</span></div>
-
-      <!-- Update Section -->
-      <div class="update-section" id="update-section">
-        <div class="update-title">อัพเดทสถานะงาน</div>
-
-        <div class="status-buttons">
-          <div class="status-option" data-status="รับทราบ" onclick="selectStatus('รับทราบ')">✔ รับทราบ</div>
-          <div class="status-option" data-status="รอจัดซื้ออุปกรณ์" onclick="selectStatus('รอจัดซื้ออุปกรณ์')">🛒 รอจัดซื้อ</div>
-          <div class="status-option" data-status="ติดต่อช่างนอก" onclick="selectStatus('ติดต่อช่างนอก')">📞 ช่างนอก</div>
-          <div class="status-option" data-status="ดำเนินการเรียบร้อย" onclick="selectStatus('ดำเนินการเรียบร้อย')" style="grid-column:span 2;background:rgba(46,139,87,0.08);border-color:var(--success);color:var(--success)">
-            ✅ ดำเนินการเรียบร้อย
-          </div>
-        </div>
-
-        <!-- Complete-only fields -->
-        <div id="complete-fields" class="hidden">
-          <div class="form-group">
-            <label class="form-label">ผู้ซ่อมหลัก</label>
-            <input type="text" id="main-tech-input" class="form-input" placeholder="ชื่อช่างผู้ซ่อม">
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div class="form-group">
-              <label class="form-label">ผู้ช่วยคนที่ 1</label>
-              <input type="text" id="asst1-input" class="form-input" placeholder="-">
-            </div>
-            <div class="form-group">
-              <label class="form-label">ผู้ช่วยคนที่ 2</label>
-              <input type="text" id="asst2-input" class="form-input" placeholder="-">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">รูปภาพหลังซ่อม</label>
-            <div style="display:flex;gap:8px;margin-bottom:10px">
-              <button class="btn btn-outline btn-sm flex-1" onclick="document.getElementById('job-camera-input').click()">
-                📷 ถ่ายรูป
-              </button>
-              <button class="btn btn-ghost btn-sm flex-1" onclick="document.getElementById('job-gallery-input').click()">
-                🖼 เลือกรูป
-              </button>
-            </div>
-            <input type="file" id="job-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleJobImage(this)">
-            <input type="file" id="job-gallery-input" accept="image/*" class="hidden" onchange="handleJobImage(this)">
-            <div id="job-image-preview" class="upload-preview"></div>
-          </div>
-        </div>
-
-        <button class="btn btn-primary btn-full btn-lg" onclick="submitJobUpdate()">
-          💾 บันทึกการอัพเดท
-        </button>
-      </div>
-    </div>
-  </div>
-
-</div><!-- end #app -->
-
-<!-- ===== GLOBAL UI ===== -->
-<div id="loading-overlay" class="loading-overlay hidden">
-  <div class="loading-spinner">
-    <div class="spinner"></div>
-    <span id="loading-text">กำลังโหลด...</span>
   </div>
 </div>
 
-<div id="toast" class="toast"></div>
+<!-- ═══════════════════════════════════════════
+     PAGE 2 – Detail / Close Job
+═══════════════════════════════════════════ -->
+<div id="page-detail" class="page">
 
-<script src="js/app.js"></script>
+  <div class="detail-topbar">
+    <button class="back-btn" onclick="goList()">&#8592;</button>
+    <div class="detail-title" id="detailTitle">รายละเอียดงาน</div>
+    <div class="status-led" id="statusLed2"></div>
+  </div>
+
+  <div class="detail-body">
+
+    <!-- รูปก่อนซ่อม -->
+    <div class="before-img-wrap" id="beforeImgWrap">
+      <div class="no-img-lg">📷<span>ไม่มีรูปก่อนซ่อม</span></div>
+    </div>
+
+    <!-- ข้อมูลงาน -->
+    <div class="info-card">
+      <div class="info-card-head">ข้อมูลการแจ้งซ่อม</div>
+      <div class="info-row">
+        <span class="info-label">DOC NO.</span>
+        <span class="info-val" id="dDocNo">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">วันที่แจ้ง</span>
+        <span class="info-val" id="dDateReport">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">แผนก</span>
+        <span class="info-val" id="dDept">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">ผู้แจ้ง</span>
+        <span class="info-val" id="dReporter">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">สถานที่</span>
+        <span class="info-val" id="dLocation">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">ประเภท</span>
+        <span class="info-val" id="dType">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">รายละเอียด</span>
+        <span class="info-val highlight" id="dDetail">–</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">สถานะปัจจุบัน</span>
+        <span class="info-val" id="dProgress">–</span>
+      </div>
+    </div>
+
+    <!-- ฟอร์มปิดงาน -->
+    <div class="form-section">
+      <div class="form-section-head">✏️  กรอกข้อมูลปิดงาน</div>
+      <div class="form-body">
+
+        <!-- วันที่เสร็จ -->
+        <div>
+          <label class="field-label">วันที่เสร็จ <span class="req">*</span></label>
+          <input type="date" id="fDateDone">
+        </div>
+
+        <!-- ความคืบหน้า -->
+        <div>
+          <label class="field-label">ความคืบหน้า <span class="req">*</span></label>
+          <select id="fProgress">
+            <option value="">— เลือกสถานะ —</option>
+            <option value="ดำเนินการเรียบร้อย">ดำเนินการเรียบร้อย</option>
+            <option value="รับทราบ">รับทราบ</option>
+            <option value="ติดต่อช่างนอก">ติดต่อช่างนอก</option>
+            <option value="ติดต่อช่างนอก , ดำเนินการเรียบร้อย">ติดต่อช่างนอก , ดำเนินการเรียบร้อย</option>
+            <option value="รอจัดซื้ออุปกรณ์">รอจัดซื้ออุปกรณ์</option>
+            <option value="ยกเลิกการซ่อม">ยกเลิกการซ่อม</option>
+          </select>
+        </div>
+
+        <!-- ผู้ซ่อมหลัก -->
+        <div>
+          <label class="field-label">ผู้ซ่อมหลัก</label>
+          <select id="fTechMain">
+            <option value="">— เลือกช่าง —</option>
+            <option>ช่างชัย</option>
+            <option>ช่างไฟว์</option>
+            <option>ช่างโอ</option>
+            <option>ช่างต้น</option>
+            <option>ช่างแลน</option>
+            <option>ช่างโบ้</option>
+            <option>ช่างเบียร์</option>
+          </select>
+        </div>
+
+        <!-- ผู้ช่วย 1 -->
+        <div>
+          <label class="field-label">ผู้ช่วยคนที่ 1</label>
+          <select id="fTech1">
+            <option value="">— ไม่มี —</option>
+            <option>ช่างชัย</option>
+            <option>ช่างไฟว์</option>
+            <option>ช่างโอ</option>
+            <option>ช่างต้น</option>
+            <option>ช่างแลน</option>
+            <option>ช่างโบ้</option>
+            <option>ช่างเบียร์</option>
+          </select>
+        </div>
+
+        <!-- ผู้ช่วย 2 -->
+        <div>
+          <label class="field-label">ผู้ช่วยคนที่ 2</label>
+          <select id="fTech2">
+            <option value="">— ไม่มี —</option>
+            <option>ช่างชัย</option>
+            <option>ช่างไฟว์</option>
+            <option>ช่างโอ</option>
+            <option>ช่างต้น</option>
+            <option>ช่างแลน</option>
+            <option>ช่างโบ้</option>
+            <option>ช่างเบียร์</option>
+          </select>
+        </div>
+
+        <!-- คำแนะนำ -->
+        <div>
+          <label class="field-label">คำแนะนำในการดูแลจากช่าง</label>
+          <textarea id="fAdvice" placeholder="บันทึกคำแนะนำ…"></textarea>
+        </div>
+
+        <!-- รูปหลังซ่อม -->
+        <div>
+          <label class="field-label">รูปหลังซ่อม</label>
+          <div id="photoPreviewWrap" style="display:none" class="preview-wrap">
+            <img id="photoPreview" src="" alt="preview">
+            <button class="preview-del" onclick="clearPhoto()">✕</button>
+          </div>
+          <div id="photoUploadArea" class="photo-upload-area">
+            <div class="pu-icon">📷</div>
+            <div class="pu-text">เลือกวิธีเพิ่มรูปหลังซ่อม</div>
+            <div class="photo-btns">
+              <button class="photo-btn" onclick="openCamera()">
+                <span>📸</span> ถ่ายเลย
+              </button>
+              <button class="photo-btn" onclick="openGallery()">
+                <span>🖼️</span> เลือกรูป
+              </button>
+            </div>
+          </div>
+          <input type="file" id="fileCamera" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+          <input type="file" id="fileGallery" accept="image/*" onchange="handlePhoto(this)">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar">
+    <button class="save-btn" id="saveBtn" onclick="saveJob()">
+      💾 บันทึกปิดงาน
+    </button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Sync overlay (first load) -->
+<div class="sync-banner" id="syncBanner">
+  <div class="spinner"></div>
+  <div class="sync-txt" id="syncTxt">กำลังซิงค์ข้อมูลครั้งแรก…</div>
+  <div class="sync-progress">
+    <div class="sync-progress-inner" id="syncProgressBar"></div>
+  </div>
+</div>
+
 <script>
-  // Handle nav click
-  function handleNavClick(tab) {
-    setNavPage(tab);
-    if (tab === 'repair') {
-      loadRepairJobs(currentFilter);
-    }
-    if (tab === 'profile') {
-      document.getElementById('profile-name').textContent = state.currentUser?.name || '-';
-      const roleMap = { technician: 'ช่าง', head_tech: 'หัวหน้าช่าง', manager: 'ผู้จัดการ', admin: 'แอดมิน' };
-      document.getElementById('profile-role').textContent = roleMap[state.currentUser?.role] || '-';
-      document.getElementById('profile-shift').textContent = state.currentShift ? `กะ${shiftName(state.currentShift)}` : '-';
-      document.getElementById('profile-date').textContent = thaiDate(new Date());
-    }
+// ══════════════════════════════════════════
+//  State
+// ══════════════════════════════════════════
+var allJobs     = [];
+var filteredJobs = [];
+var currentJob  = null;
+var currentTab  = 'all';
+var photoData   = null;   // { base64, mime }
+var isSyncing   = false;
+var saveQueue   = null;   // payload รอบันทึก
+
+var CACHE_KEY   = 'mj_closejob_cache_v2';
+var CACHE_TS    = 'mj_closejob_ts';
+
+// ══════════════════════════════════════════
+//  Init
+// ══════════════════════════════════════════
+window.onload = function() {
+  setLed('syncing');
+  var cached = loadCache();
+  if (cached && cached.length > 0) {
+    allJobs = cached;
+    renderList();
+    // sync ใน background
+    syncData(false);
+  } else {
+    // ครั้งแรก – แสดง overlay
+    document.getElementById('syncBanner').classList.add('show');
+    syncData(true);
   }
+  // วันที่วันนี้ใส่ default
+  var today = new Date();
+  var yy = today.getFullYear();
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('fDateDone').value = yy+'-'+mm+'-'+dd;
+};
+
+// ══════════════════════════════════════════
+//  Sync / Load data
+// ══════════════════════════════════════════
+function syncData(isFirst) {
+  isSyncing = true;
+  setLed('syncing');
+  if (isFirst) updateSyncProgress(20);
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      isSyncing = false;
+      if (res.ok) {
+        allJobs = res.jobs;
+        saveCache(allJobs);
+        if (isFirst) {
+          updateSyncProgress(100);
+          setTimeout(function() {
+            document.getElementById('syncBanner').classList.remove('show');
+          }, 500);
+        }
+        renderList();
+        setLed('ok');
+      } else {
+        setLed('ok');
+        if (isFirst) document.getElementById('syncBanner').classList.remove('show');
+        showToast('⚠️ โหลดข้อมูลล้มเหลว: ' + res.msg, 'error');
+      }
+    })
+    .withFailureHandler(function(err) {
+      isSyncing = false;
+      setLed('ok');
+      if (isFirst) document.getElementById('syncBanner').classList.remove('show');
+      showToast('❌ ไม่สามารถเชื่อมต่อได้', 'error');
+    })
+    .getPendingJobs();
+}
+
+function updateSyncProgress(pct) {
+  document.getElementById('syncProgressBar').style.width = pct + '%';
+  var txt = pct < 50 ? 'กำลังดึงข้อมูล…'
+          : pct < 90 ? 'กำลังประมวลผล…'
+          : 'เสร็จแล้ว!';
+  document.getElementById('syncTxt').textContent = txt;
+}
+
+// ══════════════════════════════════════════
+//  Cache (localStorage)
+// ══════════════════════════════════════════
+function saveCache(jobs) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(jobs));
+    localStorage.setItem(CACHE_TS, Date.now());
+  } catch(e) {}
+}
+function loadCache() {
+  try {
+    var d = localStorage.getItem(CACHE_KEY);
+    return d ? JSON.parse(d) : null;
+  } catch(e) { return null; }
+}
+
+// ══════════════════════════════════════════
+//  LED
+// ══════════════════════════════════════════
+function setLed(state) {
+  var leds = [document.getElementById('statusLed'), document.getElementById('statusLed2')];
+  leds.forEach(function(l) {
+    if (!l) return;
+    l.className = 'status-led' + (state === 'syncing' ? ' syncing' : state === 'ok' ? ' ok' : '');
+  });
+}
+
+// ══════════════════════════════════════════
+//  Tab
+// ══════════════════════════════════════════
+function setTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  var ids = { all:'tabAll', 'รับทราบ':'tabPending', 'รอจัดซื้ออุปกรณ์':'tabWait', empty:'tabEmpty' };
+  var el = document.getElementById(ids[tab]);
+  if (el) el.classList.add('active');
+  filterJobs();
+}
+
+// ══════════════════════════════════════════
+//  Filter & Render
+// ══════════════════════════════════════════
+function filterJobs() {
+  var kw = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  filteredJobs = allJobs.filter(function(j) {
+    // tab filter
+    if (currentTab === 'รับทราบ' && j.progress !== 'รับทราบ') return false;
+    if (currentTab === 'รอจัดซื้ออุปกรณ์' && j.progress !== 'รอจัดซื้ออุปกรณ์') return false;
+    if (currentTab === 'empty' && j.progress !== '') return false;
+
+    // keyword
+    if (!kw) return true;
+    return (
+      j.docNo.toLowerCase().includes(kw) ||
+      j.location.toLowerCase().includes(kw) ||
+      j.detail.toLowerCase().includes(kw) ||
+      j.dept.toLowerCase().includes(kw) ||
+      j.reporter.toLowerCase().includes(kw)
+    );
+  });
+
+  renderList();
+}
+
+function renderList() {
+  var el = document.getElementById('jobList');
+  filterJobs2();
+
+  if (filteredJobs.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>ไม่พบงานที่ตรงกัน</p></div>';
+    document.getElementById('jobCount').innerHTML = 'ไม่พบรายการ';
+    return;
+  }
+
+  document.getElementById('jobCount').innerHTML =
+    'พบ <span>' + filteredJobs.length + '</span> รายการ';
+
+  el.innerHTML = filteredJobs.map(function(j, idx) {
+    var badgeCls = j.progress === 'รับทราบ' ? 'badge-pending'
+                 : j.progress === 'รอจัดซื้ออุปกรณ์' ? 'badge-waiting'
+                 : 'badge-empty';
+    var badgeTxt = j.progress || 'ใหม่';
+
+    var imgHtml = j.imgBeforeUrl
+      ? '<img src="' + escHtml(j.imgBeforeUrl) + '" onerror="this.parentElement.innerHTML=\'<span class=no-img>📷</span>\'">'
+      : '<span class="no-img">📷</span>';
+
+    return '<div class="job-card" onclick="openDetail(' + idx + ')">' +
+      '<div class="job-img">' + imgHtml + '</div>' +
+      '<div class="job-body">' +
+        '<div class="job-header">' +
+          '<span class="job-dept">' + escHtml(j.dept) + '</span>' +
+          '<span class="job-badge ' + badgeCls + '">' + escHtml(badgeTxt) + '</span>' +
+        '</div>' +
+        '<div class="job-detail">' + escHtml(j.detail || j.location) + '</div>' +
+        '<div class="job-meta">#' + escHtml(j.docNo) + ' · ' + escHtml(j.location) + ' · ' + escHtml(j.dateReport) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ต้องเรียกก่อน render เพื่อแก้ bug ที่ filterJobs เรียก renderList เรียก filterJobs2
+function filterJobs2() {
+  var kw = document.getElementById('searchInput').value.trim().toLowerCase();
+  filteredJobs = allJobs.filter(function(j) {
+    if (currentTab === 'รับทราบ' && j.progress !== 'รับทราบ') return false;
+    if (currentTab === 'รอจัดซื้ออุปกรณ์' && j.progress !== 'รอจัดซื้ออุปกรณ์') return false;
+    if (currentTab === 'empty' && j.progress !== '') return false;
+    if (!kw) return true;
+    return (
+      j.docNo.toLowerCase().includes(kw) ||
+      j.location.toLowerCase().includes(kw) ||
+      j.detail.toLowerCase().includes(kw) ||
+      j.dept.toLowerCase().includes(kw) ||
+      j.reporter.toLowerCase().includes(kw)
+    );
+  });
+}
+
+// ══════════════════════════════════════════
+//  Open Detail
+// ══════════════════════════════════════════
+function openDetail(idx) {
+  currentJob = filteredJobs[idx];
+  var j = currentJob;
+
+  // fill info
+  document.getElementById('detailTitle').textContent = j.dept + ' – ' + j.location;
+  document.getElementById('dDocNo').textContent      = j.docNo;
+  document.getElementById('dDateReport').textContent = j.dateReport;
+  document.getElementById('dDept').textContent       = j.dept;
+  document.getElementById('dReporter').textContent   = j.reporter;
+  document.getElementById('dLocation').textContent   = j.location;
+  document.getElementById('dType').textContent       = j.type;
+  document.getElementById('dDetail').textContent     = j.detail;
+  document.getElementById('dProgress').textContent   = j.progress || '(ใหม่)';
+
+  // รูปก่อนซ่อม จากคอลัม AN
+  var wrap = document.getElementById('beforeImgWrap');
+  if (j.imgBeforeUrl) {
+    wrap.innerHTML = '<img src="' + escHtml(j.imgBeforeUrl) +
+      '" onerror="this.parentElement.innerHTML=\'<div class=no-img-lg>📷<span>โหลดรูปไม่ได้</span></div>\'">';
+  } else {
+    wrap.innerHTML = '<div class="no-img-lg">📷<span>ไม่มีรูปก่อนซ่อม</span></div>';
+  }
+
+  // pre-fill ช่าง
+  document.getElementById('fTechMain').value = j.techMain || '';
+  document.getElementById('fTech1').value    = j.tech1    || '';
+  document.getElementById('fTech2').value    = j.tech2    || '';
+  document.getElementById('fAdvice').value   = '';
+
+  // clear photo
+  clearPhoto();
+
+  // show page
+  document.getElementById('page-list').classList.remove('active');
+  document.getElementById('page-detail').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goList() {
+  document.getElementById('page-detail').classList.remove('active');
+  document.getElementById('page-list').classList.add('active');
+}
+
+// ══════════════════════════════════════════
+//  Photo
+// ══════════════════════════════════════════
+function openCamera()  { document.getElementById('fileCamera').click(); }
+function openGallery() { document.getElementById('fileGallery').click(); }
+
+function handlePhoto(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    // แสดง preview
+    document.getElementById('photoPreview').src = dataUrl;
+    document.getElementById('photoPreviewWrap').style.display = 'block';
+    document.getElementById('photoUploadArea').style.display  = 'none';
+    // เก็บ base64 (ตัด prefix)
+    var parts = dataUrl.split(',');
+    var mime  = parts[0].match(/:(.*?);/)[1];
+    photoData = { base64: parts[1], mime: mime };
+  };
+  reader.readAsDataURL(file);
+  input.value = ''; // reset
+}
+
+function clearPhoto() {
+  photoData = null;
+  document.getElementById('photoPreviewWrap').style.display = 'none';
+  document.getElementById('photoUploadArea').style.display  = 'flex';
+  document.getElementById('photoPreview').src = '';
+}
+
+// ══════════════════════════════════════════
+//  Save Job
+// ══════════════════════════════════════════
+function saveJob() {
+  var progress = document.getElementById('fProgress').value;
+  var dateDone = document.getElementById('fDateDone').value;
+
+  if (!progress) { showToast('⚠️ กรุณาเลือกความคืบหน้า', 'error'); return; }
+  if (!dateDone) { showToast('⚠️ กรุณาเลือกวันที่เสร็จ', 'error'); return; }
+
+  var payload = {
+    rowNum   : currentJob.rowNum,
+    docNo    : currentJob.docNo,
+    dateDone : dateDone,
+    progress : progress,
+    techMain : document.getElementById('fTechMain').value,
+    tech1    : document.getElementById('fTech1').value,
+    tech2    : document.getElementById('fTech2').value,
+    advice   : document.getElementById('fAdvice').value,
+    imgBase64: photoData ? photoData.base64 : '',
+    imgMime  : photoData ? photoData.mime   : ''
+  };
+
+  // ── ไปหน้าแรกทันที ──
+  goList();
+
+  // ── ถ้า "ดำเนินการเรียบร้อย" หรือ "ติดต่อช่างนอก , ดำเนินการเรียบร้อย" → ลบออกจาก list ─
+  var closedStatuses = ['ดำเนินการเรียบร้อย', 'ติดต่อช่างนอก , ดำเนินการเรียบร้อย', 'ยกเลิกการซ่อม'];
+  if (closedStatuses.indexOf(progress) !== -1) {
+    allJobs = allJobs.filter(function(j) { return j.rowNum !== currentJob.rowNum; });
+    saveCache(allJobs);
+  } else {
+    // อัพเดทสถานะใน cache
+    allJobs = allJobs.map(function(j) {
+      if (j.rowNum === currentJob.rowNum) {
+        j.progress = progress;
+      }
+      return j;
+    });
+    saveCache(allJobs);
+  }
+  renderList();
+  filterJobs();
+
+  // ── บันทึก background ──
+  setLed('syncing');
+  showToast('⏳ กำลังบันทึก…', '');
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (res.ok) {
+        showToast('✅ บันทึกสำเร็จ!', 'success');
+        // sync ใหม่เพื่ออัพเดทข้อมูล
+        syncData(false);
+      } else {
+        showToast('❌ บันทึกล้มเหลว: ' + res.msg, 'error');
+        setLed('ok');
+      }
+    })
+    .withFailureHandler(function(err) {
+      showToast('❌ เชื่อมต่อล้มเหลว', 'error');
+      setLed('ok');
+    })
+    .saveJob(payload);
+}
+
+// ══════════════════════════════════════════
+//  Helpers
+// ══════════════════════════════════════════
+function showToast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className   = 'toast show ' + (type || '');
+  clearTimeout(el._t);
+  el._t = setTimeout(function() { el.className = 'toast'; }, 3000);
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// Prevent filterJobs ↔ renderList ↔ filterJobs loop
+// เปลี่ยน filterJobs ให้เรียก filterJobs2 แล้ว render
+(function(){
+  var orig = window.filterJobs;
+  window.filterJobs = function() {
+    filterJobs2();
+    // render โดยตรง ไม่เรียก renderList ที่เรียก filterJobs2 อีก
+    var el = document.getElementById('jobList');
+    if (filteredJobs.length === 0) {
+      el.innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>ไม่พบงานที่ตรงกัน</p></div>';
+      document.getElementById('jobCount').innerHTML = 'ไม่พบรายการ';
+      return;
+    }
+    document.getElementById('jobCount').innerHTML =
+      'พบ <span>' + filteredJobs.length + '</span> รายการ';
+
+    el.innerHTML = filteredJobs.map(function(j, idx) {
+      var badgeCls = j.progress === 'รับทราบ' ? 'badge-pending'
+                   : j.progress === 'รอจัดซื้ออุปกรณ์' ? 'badge-waiting'
+                   : 'badge-empty';
+      var badgeTxt = j.progress || 'ใหม่';
+      var imgHtml = j.imgBeforeUrl
+        ? '<img src="' + escHtml(j.imgBeforeUrl) + '" onerror="this.parentElement.innerHTML=\'<span class=no-img>📷</span>\'">'
+        : '<span class="no-img">📷</span>';
+      return '<div class="job-card" onclick="openDetail(' + idx + ')">' +
+        '<div class="job-img">' + imgHtml + '</div>' +
+        '<div class="job-body">' +
+          '<div class="job-header">' +
+            '<span class="job-dept">' + escHtml(j.dept) + '</span>' +
+            '<span class="job-badge ' + badgeCls + '">' + escHtml(badgeTxt) + '</span>' +
+          '</div>' +
+          '<div class="job-detail">' + escHtml(j.detail || j.location) + '</div>' +
+          '<div class="job-meta">#' + escHtml(j.docNo) + ' · ' + escHtml(j.location) + ' · ' + escHtml(j.dateReport) + '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  };
+})();
 </script>
 </body>
 </html>
