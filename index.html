@@ -10,15 +10,10 @@
 <link rel="manifest" href="manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-:root {
-  --bg:#0f1117; --surface:#1a1d27; --card:#21253a; --border:#2e3350;
-  --accent:#3b7eff; --accent2:#00d4aa; --warn:#ff6b35; --danger:#ff4444;
-  --text:#e8ecf4; --muted:#7a82a0; --success:#22c55e; --r:12px;
-}
+:root{--bg:#0f1117;--surface:#1a1d27;--card:#21253a;--border:#2e3350;--accent:#3b7eff;--accent2:#00d4aa;--warn:#ff6b35;--danger:#ff4444;--text:#e8ecf4;--muted:#7a82a0;--success:#22c55e;--r:12px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* Topbar */
 .topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;}
 .topbar-info{flex:1;}
 .topbar-title{font-size:16px;font-weight:700;}
@@ -28,7 +23,6 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .led.ok{background:var(--success);box-shadow:0 0 6px var(--success);}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
-/* Search + Tabs */
 .search-wrap{padding:12px 16px 8px;}
 .search-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;outline:none;transition:border .2s;}
 .search-box:focus{border-color:var(--accent);}
@@ -39,7 +33,6 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .count-bar{padding:4px 16px 8px;font-size:12px;color:var(--muted);}
 .count-bar b{color:var(--accent2);}
 
-/* Job List */
 .job-list{padding:0 16px 90px;display:flex;flex-direction:column;gap:10px;}
 .job-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;align-items:stretch;cursor:pointer;transition:all .15s;}
 .job-card:active{transform:scale(.985);}
@@ -57,31 +50,25 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .jc-detail{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
 .jc-meta{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* Empty / Loading */
 .empty{text-align:center;padding:60px 20px;color:var(--muted);}
 .empty .ei{font-size:48px;margin-bottom:12px;}
 .loading{display:flex;flex-direction:column;align-items:center;padding:60px 20px;gap:16px;}
 .spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Pages */
-.page{display:none;min-height:100vh;}
-.page.on{display:block;}
+.page{display:none;min-height:100vh;}.page.on{display:block;}
 
-/* Detail */
 .detail-bar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;}
 .back-btn{background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer;padding:2px 6px;line-height:1;}
 .detail-title{flex:1;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .dbody{padding:16px;display:flex;flex-direction:column;gap:14px;padding-bottom:100px;}
 
-/* Before img */
 .before-img{border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--border);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;}
 .before-img img{width:100%;height:100%;object-fit:cover;display:block;}
 .no-photo{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:40px;color:var(--border);}
 .no-photo span{font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;}
 .before-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:rgba(255,255,255,.7);font-size:11px;text-align:center;padding:4px;}
 
-/* Info card */
 .info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .ic-head{padding:7px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--accent);background:rgba(59,126,255,.07);border-bottom:1px solid var(--border);text-transform:uppercase;}
 .ic-row{display:flex;padding:8px 14px;border-bottom:1px solid rgba(46,51,80,.4);gap:8px;}
@@ -90,7 +77,6 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .ic-val{font-size:13px;flex:1;word-break:break-word;}
 .ic-val.hl{color:var(--warn);font-weight:500;}
 
-/* Form */
 .form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
 .fc-head{padding:7px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--accent2);background:rgba(0,212,170,.06);border-bottom:1px solid var(--border);text-transform:uppercase;}
 .fc-body{padding:14px;display:flex;flex-direction:column;gap:12px;}
@@ -101,15 +87,13 @@ input[type="date"]:focus,select:focus,textarea:focus{border-color:var(--accent);
 select option{background:var(--card);}
 textarea{resize:vertical;min-height:70px;}
 
-/* Date display BE */
 .date-display{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--text);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border .2s;}
 .date-display:hover{border-color:var(--accent);}
 .dd-val{color:var(--accent2);font-weight:500;}
 input#realDate{display:none;}
 
-/* Photo */
 .photo-area{border:2px dashed var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;}
-.pa-icon{font-size:30px;} .pa-txt{font-size:12px;color:var(--muted);text-align:center;}
+.pa-icon{font-size:30px;}.pa-txt{font-size:12px;color:var(--muted);text-align:center;}
 .photo-btns{display:flex;gap:8px;width:100%;}
 .pbtn{flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;}
 .pbtn:hover{border-color:var(--accent2);color:var(--accent2);}
@@ -118,20 +102,17 @@ input#realDate{display:none;}
 .preview-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 #fc,#fg{display:none;}
 
-/* Save bar */
 .save-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:var(--surface);border-top:1px solid var(--border);z-index:200;}
 .save-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .save-btn:active{transform:scale(.97);}
 .save-btn.saving{background:var(--warn);}
 .save-btn:disabled{background:var(--border);cursor:not-allowed;}
 
-/* Toast */
 .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:1px solid var(--border);opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.ok{border-color:var(--success);color:var(--success);}
 .toast.err{border-color:var(--danger);color:var(--danger);}
 
-/* Overlay */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
 .overlay.show{display:flex;}
 .ov-txt{font-size:14px;color:var(--muted);}
@@ -194,7 +175,7 @@ input#realDate{display:none;}
         <div>
           <label class="flabel">วันที่เสร็จ <span class="req">*</span></label>
           <div class="date-display" onclick="document.getElementById('realDate').showPicker()">
-            <span id="dateDisplayTxt">เลือกวันที่…</span>
+            <span id="dateDisplayTxt" class="dd-val">เลือกวันที่…</span>
             <span style="color:var(--muted)">📅</span>
           </div>
           <input type="date" id="realDate" onchange="onDateChange(this.value)">
@@ -275,24 +256,22 @@ input#realDate{display:none;}
 </div>
 
 <script>
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  ⚙️  CONFIG
-// ══════════════════════════════════════════════════
-var API = "https://script.google.com/macros/s/AKfycbymxipvYzg63XJ6uzG37GO-CyGCt88bN2C1b_AAcafvHOOybjNGLvqeCIVdbDDxjcPd/exec";
-// วางลิ้งค์ Deploy ที่นี่ เช่น:
-// var API = "https://script.google.com/macros/s/AKfycby.../exec";
+// ══════════════════════════════════════════════
+var API = "https://script.google.com/macros/s/AKfycbxwoVoJOqh4dKza1MfM0tKjJo8gQaCX2HByIE4b7uXdLRQoVJ8t_qK0a0Ha_pnnFu86/exec";
 
-// ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 var allJobs  = [];
 var shown    = [];
 var curJob   = null;
 var curTab   = "all";
 var photoObj = null;
 
-var CACHE_KEY   = "mj_jobs_v3";
+var CACHE_KEY   = "mj_jobs_v4";
 var DONE_STATUS = ["ดำเนินการเรียบร้อย","ติดต่อช่างนอก , ดำเนินการเรียบร้อย","ยกเลิกการซ่อม"];
 
-// ── init ──────────────────────────────────────────
+// ── init ──────────────────────────────────────
 window.addEventListener("load", function() {
   setLed("syncing");
   setTodayDate();
@@ -308,184 +287,53 @@ window.addEventListener("load", function() {
 });
 
 function setTodayDate() {
-  var n  = new Date();
+  var n   = new Date();
   var iso = n.getFullYear() + "-" + pad(n.getMonth()+1) + "-" + pad(n.getDate());
   document.getElementById("realDate").value = iso;
   onDateChange(iso);
 }
 
-// ── Sync (GET – ไม่มี CORS ปัญหา) ────────────────
+// ── Sync ──────────────────────────────────────
 function syncBg(isFirst) {
   if (isFirst) setOvPct(20);
   setLed("syncing");
-
-  var url = API + "?action=getPendingJobs&_=" + Date.now();
-
-  fetch(url, { method: "GET" })
-    .then(function(r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    })
+  fetch(API + "?action=getPendingJobs&_=" + Date.now(), { method: "GET" })
+    .then(function(r) { return r.json(); })
     .then(function(res) {
-      if (res.ok) {
-        allJobs = res.jobs;
-        saveCache(allJobs);
-        doFilter();
-        setLed("ok");
-        if (isFirst) {
-          setOvPct(100);
-          setTimeout(function(){ document.getElementById("overlay").classList.remove("show"); }, 400);
-        }
-      } else {
-        throw new Error(res.msg);
+      if (!res.ok) throw new Error(res.msg);
+      allJobs = res.jobs;
+      saveCache(allJobs);
+      doFilter();
+      setLed("ok");
+      if (isFirst) {
+        setOvPct(100);
+        setTimeout(function(){ document.getElementById("overlay").classList.remove("show"); }, 400);
       }
     })
     .catch(function(err) {
       setLed("ok");
       if (isFirst) document.getElementById("overlay").classList.remove("show");
-      toast("❌ โหลดข้อมูลล้มเหลว: " + err.message, "err");
+      toast("❌ โหลดล้มเหลว: " + err.message, "err");
     });
 }
 
-// ── Save (form POST – ไม่ถูก CORS บล็อก) ─────────
-// วิธีนี้ทำงานได้เพราะ:
-// 1. URLSearchParams → Content-Type: application/x-www-form-urlencoded
-// 2. Browser ไม่ส่ง preflight สำหรับ "simple request" นี้
-// 3. Apps Script รับ e.parameter ได้เลย
-// แต่ response จะเป็น opaque (no-cors) ถ้ามีปัญหา → ใช้ mode:"cors" ก่อน
-// ถ้า CORS error → fallback ใช้ Image beacon (fire-and-forget)
-function doSave() {
-  var prog = document.getElementById("fProg").value;
-  var dtTH = getDateTH();
-  if (!prog) { toast("⚠️ กรุณาเลือกความคืบหน้า", "err"); return; }
-  if (!dtTH) { toast("⚠️ กรุณาเลือกวันที่เสร็จ", "err"); return; }
-
-  var btn = document.getElementById("saveBtn");
-  btn.disabled = true;
-  btn.classList.add("saving");
-  btn.textContent = "⏳ กำลังบันทึก…";
-
-  // กลับหน้าแรกทันที (UX)
-  goList();
-  updateLocalCache(curJob.rowNum, prog);
-  doFilter();
-
-  var savedJob = curJob;  // เก็บ reference ก่อน curJob เปลี่ยน
-
-  // ── Step 1: อัพรูป (ถ้ามี) ────────────────────
-  if (photoObj && photoObj.base64) {
-    toast("📸 กำลังอัพรูป…", "");
-    setLed("syncing");
-
-    var uploadParams = new URLSearchParams({
-      action   : "uploadImage",
-      docNo    : savedJob.docNo,
-      imgBase64: photoObj.base64,
-      imgMime  : photoObj.mime
-    });
-
-    callAPI(uploadParams)
-      .then(function(res) {
-        if (!res.ok) throw new Error("Upload: " + res.msg);
-        // Step 2: บันทึกข้อมูล พร้อม imgPath
-        return saveData(savedJob, prog, dtTH, res.imgPath || "");
-      })
-      .then(function(res) {
-        if (!res.ok) throw new Error("Save: " + res.msg);
-        toast("✅ บันทึกสำเร็จ!", "ok");
-        syncBg(false);
-      })
-      .catch(function(err) {
-        toast("❌ " + err.message, "err");
-        setLed("ok");
-      })
-      .finally(function() {
-        resetSaveBtn();
-      });
-
-  } else {
-    // ── ไม่มีรูป บันทึกตรงเลย ───────────────────
-    setLed("syncing");
-    saveData(savedJob, prog, dtTH, "")
-      .then(function(res) {
-        if (!res.ok) throw new Error(res.msg);
-        toast("✅ บันทึกสำเร็จ!", "ok");
-        syncBg(false);
-      })
-      .catch(function(err) {
-        toast("❌ บันทึกล้มเหลว: " + err.message, "err");
-        setLed("ok");
-      })
-      .finally(function() {
-        resetSaveBtn();
-      });
-  }
-}
-
-function saveData(job, prog, dtTH, imgPath) {
-  var params = new URLSearchParams({
-    action    : "saveJob",
-    rowNum    : job.rowNum,
-    docNo     : job.docNo,
-    dateDoneTH: dtTH,
-    progress  : prog,
-    techMain  : document.getElementById("fMain").value,
-    tech1     : document.getElementById("fT1").value,
-    tech2     : document.getElementById("fT2").value,
-    advice    : document.getElementById("fAdvice").value,
-    imgPath   : imgPath
-  });
-  return callAPI(params);
-}
-
-// callAPI – ลองแบบ cors ก่อน ถ้าล้มเหลวให้ fallback เป็น GET
-function callAPI(urlSearchParams) {
-  // วิธี 1: POST form-urlencoded (ไม่ต้อง preflight สำหรับ simple request)
-  // Apps Script redirect 302 → fetch follow redirect → ได้ JSON
-  return fetch(API, {
-    method   : "POST",
-    body     : urlSearchParams
-    // ไม่ใส่ mode:"no-cors" เพราะถ้า no-cors จะอ่าน response ไม่ได้
-    // ไม่ใส่ Content-Type header เพราะ URLSearchParams set ให้อัตโนมัติ
-  })
-  .then(function(r) {
-    // Apps Script อาจ redirect ไปยัง URL อื่น fetch จะ follow auto
-    return r.json();
-  })
-  .catch(function(err) {
-    // Fallback: ส่งเป็น GET แทน (สำหรับ Chrome ที่บล็อก POST บางกรณี)
-    // ไม่รวม imgBase64 ใน GET fallback เพราะ URL ยาวเกิน
-    var qs = urlSearchParams.toString();
-    // ตัด imgBase64 ออกถ้าเป็น GET (ยาวเกิน)
-    var fallbackUrl = API + "?" + qs.replace(/&?imgBase64=[^&]*/g, "") + "&_=" + Date.now();
-    return fetch(fallbackUrl, { method: "GET" }).then(function(r){ return r.json(); });
-  });
-}
-
-function resetSaveBtn() {
-  var btn = document.getElementById("saveBtn");
-  btn.disabled = false;
-  btn.classList.remove("saving");
-  btn.textContent = "💾 บันทึกปิดงาน";
-}
-
-// ── Cache ────────────────────────────────────────
+// ── Cache ──────────────────────────────────────
 function saveCache(j) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(j)); } catch(e){} }
 function loadCache()  { try { var d=localStorage.getItem(CACHE_KEY); return d?JSON.parse(d):null; } catch(e){return null;} }
 
-function updateLocalCache(rowNum, prog) {
+function updateLocalCache(docNo, prog) {
   if (DONE_STATUS.indexOf(prog) !== -1) {
-    allJobs = allJobs.filter(function(j){ return j.rowNum !== rowNum; });
+    allJobs = allJobs.filter(function(j){ return j.docNo !== docNo; });
   } else {
     allJobs = allJobs.map(function(j){
-      if (j.rowNum === rowNum) j.progress = prog;
+      if (j.docNo === docNo) j.progress = prog;
       return j;
     });
   }
   saveCache(allJobs);
 }
 
-// ── LED ──────────────────────────────────────────
+// ── LED ────────────────────────────────────────
 function setLed(s) {
   ["led1","led2"].forEach(function(id){
     var el = document.getElementById(id);
@@ -493,7 +341,7 @@ function setLed(s) {
   });
 }
 
-// ── Tab ──────────────────────────────────────────
+// ── Tab ────────────────────────────────────────
 function setTab(t) {
   curTab = t;
   document.querySelectorAll(".tab").forEach(function(b){ b.classList.remove("on"); });
@@ -503,7 +351,7 @@ function setTab(t) {
   doFilter();
 }
 
-// ── Filter & Render ───────────────────────────────
+// ── Filter & Render ────────────────────────────
 function doFilter() {
   var kw = document.getElementById("searchInput").value.trim().toLowerCase();
   shown = allJobs.filter(function(j) {
@@ -513,15 +361,12 @@ function doFilter() {
     if (!kw) return true;
     return (j.docNo+j.location+j.detail+j.dept+j.reporter).toLowerCase().includes(kw);
   });
-
   document.getElementById("countBar").innerHTML = "พบ <b>" + shown.length + "</b> รายการ";
   var el = document.getElementById("jobList");
-
   if (!shown.length) {
     el.innerHTML = '<div class="empty"><div class="ei">🔍</div><p>ไม่พบรายการ</p></div>';
     return;
   }
-
   el.innerHTML = shown.map(function(j, i) {
     var bc = j.progress==="รับทราบ"?"badge-a":j.progress==="รอจัดซื้ออุปกรณ์"?"badge-b":"badge-c";
     var bt = j.progress || "ใหม่";
@@ -530,7 +375,8 @@ function doFilter() {
         +' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
         +'<span class="noimg" style="display:none">📷</span>'
       : '<span class="noimg">📷</span>';
-    return '<div class="job-card" onclick="openJob('+i+')"><div class="jc-img">'+img+'</div>'
+    return '<div class="job-card" onclick="openJob('+i+')">'
+      +'<div class="jc-img">'+img+'</div>'
       +'<div class="jc-body"><div class="jc-row1">'
         +'<span class="jc-dept">'+esc(j.dept)+'</span>'
         +'<span class="jc-badge '+bc+'">'+esc(bt)+'</span>'
@@ -541,10 +387,10 @@ function doFilter() {
   }).join("");
 }
 
-// ── Open Detail ───────────────────────────────────
+// ── Open Detail ────────────────────────────────
 function openJob(i) {
   curJob = shown[i];
-  var j = curJob;
+  var j  = curJob;
   document.getElementById("dtTitle").textContent   = j.dept + " – " + j.location;
   document.getElementById("iDocNo").textContent    = j.docNo;
   document.getElementById("iDateRep").textContent  = j.dateReport;
@@ -554,7 +400,6 @@ function openJob(i) {
   document.getElementById("iType").textContent     = j.type;
   document.getElementById("iDetail").textContent   = j.detail;
   document.getElementById("iProgress").textContent = j.progress || "(ใหม่)";
-
   var bw = document.getElementById("beforeImg");
   if (j.imgBeforeUrl) {
     bw.innerHTML = '<img src="'+esc(j.imgBeforeUrl)+'"'
@@ -563,38 +408,46 @@ function openJob(i) {
   } else {
     bw.innerHTML = '<div class="no-photo">📷<span>ไม่มีรูปก่อนซ่อม</span></div>';
   }
-
   document.getElementById("fMain").value   = j.techMain || "";
   document.getElementById("fT1").value     = j.tech1    || "";
   document.getElementById("fT2").value     = j.tech2    || "";
   document.getElementById("fAdvice").value = "";
   clearPhoto();
-
   document.getElementById("pgList").classList.remove("on");
   document.getElementById("pgDetail").classList.add("on");
   window.scrollTo(0,0);
 }
-
 function goList() {
   document.getElementById("pgDetail").classList.remove("on");
   document.getElementById("pgList").classList.add("on");
 }
 
-// ── Date ─────────────────────────────────────────
+// ── Date helpers ────────────────────────────────
 function onDateChange(iso) {
   if (!iso) return;
   var p = iso.split("-");
-  document.getElementById("dateDisplayTxt").textContent = p[2]+"/"+p[1]+"/"+(parseInt(p[0])+543);
-  document.getElementById("dateDisplayTxt").style.color = "var(--accent2)";
+  // แสดงเป็น พ.ศ. (CE + 543)
+  document.getElementById("dateDisplayTxt").textContent =
+    p[2] + "/" + p[1] + "/" + (parseInt(p[0]) + 543);
 }
+
 function getDateTH() {
+  // คืน "DD/MM/YYYY" ที่ปีเป็น พ.ศ.
+  // นี่คือค่าที่จะส่งไป Apps Script และบันทึกลง sheet ตรงๆ
   var iso = document.getElementById("realDate").value;
   if (!iso) return "";
   var p = iso.split("-");
-  return p[2]+"/"+p[1]+"/"+(parseInt(p[0])+543);
+  return p[2] + "/" + p[1] + "/" + (parseInt(p[0]) + 543);
 }
 
-// ── Photo ─────────────────────────────────────────
+// ── Timestamp สำหรับชื่อไฟล์รูป ────────────────
+// รูปแบบ: DDMMHHmm  เช่น 28041314 = วันที่ 28 เดือน 04 เวลา 13:14
+function getTimestamp() {
+  var n = new Date();
+  return pad(n.getDate()) + pad(n.getMonth()+1) + pad(n.getHours()) + pad(n.getMinutes());
+}
+
+// ── Photo ──────────────────────────────────────
 function handlePhoto(input) {
   var f = input.files[0]; if (!f) return;
   var r = new FileReader();
@@ -611,18 +464,120 @@ function handlePhoto(input) {
 }
 function clearPhoto() {
   photoObj = null;
-  document.getElementById("pvWrap").style.display  = "none";
+  document.getElementById("pvWrap").style.display   = "none";
   document.getElementById("photoArea").style.display = "flex";
   document.getElementById("pvImg").src = "";
 }
 
-// ── Utils ─────────────────────────────────────────
+// ── Save ───────────────────────────────────────
+function doSave() {
+  var prog = document.getElementById("fProg").value;
+  var dtTH = getDateTH();   // "28/04/2569" พ.ศ. ตรงๆ
+  if (!prog) { toast("⚠️ กรุณาเลือกความคืบหน้า", "err"); return; }
+  if (!dtTH) { toast("⚠️ กรุณาเลือกวันที่เสร็จ", "err"); return; }
+
+  var btn = document.getElementById("saveBtn");
+  btn.disabled = true;
+  btn.classList.add("saving");
+  btn.innerHTML = "⏳ กำลังบันทึก…";
+
+  goList();
+  var savedJob = curJob;
+  updateLocalCache(savedJob.docNo, prog);
+  doFilter();
+
+  if (photoObj && photoObj.base64) {
+    // มีรูป: อัพรูปก่อน → แล้วค่อย save
+    toast("📸 กำลังอัพรูป…", "");
+    setLed("syncing");
+
+    var ts = getTimestamp();  // DDMMHHmm
+
+    callAPI(new URLSearchParams({
+      action    : "uploadImage",
+      docNo     : savedJob.docNo,
+      timestamp : ts,
+      imgBase64 : photoObj.base64,
+      imgMime   : photoObj.mime
+    }))
+    .then(function(res) {
+      if (!res.ok) throw new Error("อัพรูปล้มเหลว: " + res.msg);
+      return callAPI(new URLSearchParams({
+        action    : "saveJob",
+        docNo     : savedJob.docNo,
+        dateDoneTH: dtTH,
+        progress  : prog,
+        techMain  : document.getElementById("fMain").value,
+        tech1     : document.getElementById("fT1").value,
+        tech2     : document.getElementById("fT2").value,
+        advice    : document.getElementById("fAdvice").value,
+        imgPath   : res.imgPath || ""
+      }));
+    })
+    .then(function(res) {
+      if (!res.ok) throw new Error("บันทึกล้มเหลว: " + res.msg);
+      toast("✅ บันทึกสำเร็จ!", "ok");
+      syncBg(false);
+    })
+    .catch(function(err) {
+      toast("❌ " + err.message, "err");
+      setLed("ok");
+    })
+    .finally(resetBtn);
+
+  } else {
+    // ไม่มีรูป: save เลย
+    setLed("syncing");
+    callAPI(new URLSearchParams({
+      action    : "saveJob",
+      docNo     : savedJob.docNo,
+      dateDoneTH: dtTH,
+      progress  : prog,
+      techMain  : document.getElementById("fMain").value,
+      tech1     : document.getElementById("fT1").value,
+      tech2     : document.getElementById("fT2").value,
+      advice    : document.getElementById("fAdvice").value,
+      imgPath   : ""
+    }))
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.msg);
+      toast("✅ บันทึกสำเร็จ!", "ok");
+      syncBg(false);
+    })
+    .catch(function(err) {
+      toast("❌ บันทึกล้มเหลว: " + err.message, "err");
+      setLed("ok");
+    })
+    .finally(resetBtn);
+  }
+}
+
+// ── callAPI ─────────────────────────────────────
+// POST form-urlencoded → ไม่ trigger CORS preflight
+function callAPI(params) {
+  return fetch(API, { method: "POST", body: params })
+    .then(function(r) { return r.json(); })
+    .catch(function() {
+      // Fallback GET (ถ้า POST ถูกบล็อก และไม่มีรูป)
+      var qs = params.toString().replace(/&?imgBase64=[^&]*/g, "");
+      return fetch(API + "?" + qs + "&_=" + Date.now()).then(function(r){ return r.json(); });
+    });
+}
+
+function resetBtn() {
+  var btn = document.getElementById("saveBtn");
+  btn.disabled = false;
+  btn.classList.remove("saving");
+  btn.innerHTML = "💾 บันทึกปิดงาน";
+}
+
+// ── Utils ──────────────────────────────────────
 function toast(msg, type) {
   var el = document.getElementById("toast");
   el.textContent = msg;
   el.className = "toast show" + (type ? " "+type : "");
   clearTimeout(el._t);
-  el._t = setTimeout(function(){ el.className = "toast"; }, 3500);
+  el._t = setTimeout(function(){ el.className="toast"; }, 3500);
 }
 function esc(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
