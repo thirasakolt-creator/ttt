@@ -11,261 +11,137 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 :root {
-  --bg:      #0f1117;
-  --surface: #1a1d27;
-  --card:    #21253a;
-  --border:  #2e3350;
-  --accent:  #3b7eff;
-  --accent2: #00d4aa;
-  --warn:    #ff6b35;
-  --danger:  #ff4444;
-  --text:    #e8ecf4;
-  --muted:   #7a82a0;
-  --success: #22c55e;
-  --r:       12px;
+  --bg:#0f1117; --surface:#1a1d27; --card:#21253a; --border:#2e3350;
+  --accent:#3b7eff; --accent2:#00d4aa; --warn:#ff6b35; --danger:#ff4444;
+  --text:#e8ecf4; --muted:#7a82a0; --success:#22c55e; --r:12px;
 }
-* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-body { font-family:'Sarabun',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-/* ── Topbar ── */
-.topbar {
-  position:sticky; top:0; z-index:100;
-  background:var(--surface); border-bottom:1px solid var(--border);
-  padding:12px 16px; display:flex; align-items:center; gap:12px;
-}
-.topbar-info { flex:1; }
-.topbar-title { font-size:16px; font-weight:700; }
-.topbar-sub   { font-size:11px; color:var(--muted); }
-.led {
-  width:12px; height:12px; border-radius:50%;
-  background:var(--muted); flex-shrink:0;
-  box-shadow:0 0 0 0 transparent; transition:background .3s;
-}
-.led.syncing { background:var(--danger); animation:blink .7s infinite; }
-.led.ok      { background:var(--success); box-shadow:0 0 6px var(--success); }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+/* Topbar */
+.topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.topbar-info{flex:1;}
+.topbar-title{font-size:16px;font-weight:700;}
+.topbar-sub{font-size:11px;color:var(--muted);}
+.led{width:12px;height:12px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s;}
+.led.syncing{background:var(--danger);animation:blink .7s infinite;}
+.led.ok{background:var(--success);box-shadow:0 0 6px var(--success);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
-/* ── Search + Tabs ── */
-.search-wrap { padding:12px 16px 8px; }
-.search-box {
-  width:100%; background:var(--card); border:1px solid var(--border);
-  border-radius:10px; padding:10px 14px; color:var(--text);
-  font-family:'Sarabun',sans-serif; font-size:14px; outline:none;
-  transition:border .2s;
-}
-.search-box:focus { border-color:var(--accent); }
-.search-box::placeholder { color:var(--muted); }
+/* Search + Tabs */
+.search-wrap{padding:12px 16px 8px;}
+.search-box{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+.search-box:focus{border-color:var(--accent);}
+.search-box::placeholder{color:var(--muted);}
+.tabs{display:flex;padding:0 16px;gap:6px;flex-wrap:wrap;margin-bottom:2px;}
+.tab{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Sarabun',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.count-bar{padding:4px 16px 8px;font-size:12px;color:var(--muted);}
+.count-bar b{color:var(--accent2);}
 
-.tabs { display:flex; padding:0 16px; gap:6px; flex-wrap:wrap; margin-bottom:2px; }
-.tab {
-  padding:5px 14px; border-radius:20px; border:1px solid var(--border);
-  background:transparent; color:var(--muted); font-family:'Sarabun',sans-serif;
-  font-size:12px; cursor:pointer; transition:all .2s; white-space:nowrap;
-}
-.tab.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+/* Job List */
+.job-list{padding:0 16px 90px;display:flex;flex-direction:column;gap:10px;}
+.job-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;align-items:stretch;cursor:pointer;transition:all .15s;}
+.job-card:active{transform:scale(.985);}
+.job-card:hover{border-color:var(--accent);}
+.jc-img{width:78px;flex-shrink:0;background:#0d0f1a;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.jc-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.jc-img .noimg{font-size:26px;color:var(--border);}
+.jc-body{flex:1;padding:10px 12px;overflow:hidden;}
+.jc-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.jc-dept{font-size:15px;font-weight:700;color:var(--accent2);letter-spacing:.5px;}
+.jc-badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap;}
+.badge-a{background:rgba(255,107,53,.15);color:var(--warn);border:1px solid rgba(255,107,53,.3);}
+.badge-b{background:rgba(59,126,255,.12);color:var(--accent);border:1px solid rgba(59,126,255,.25);}
+.badge-c{background:rgba(122,130,160,.1);color:var(--muted);border:1px solid var(--border);}
+.jc-detail{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.jc-meta{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-.count-bar { padding:4px 16px 8px; font-size:12px; color:var(--muted); }
-.count-bar b { color:var(--accent2); }
+/* Empty / Loading */
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty .ei{font-size:48px;margin-bottom:12px;}
+.loading{display:flex;flex-direction:column;align-items:center;padding:60px 20px;gap:16px;}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── Job List ── */
-.job-list { padding:0 16px 90px; display:flex; flex-direction:column; gap:10px; }
+/* Pages */
+.page{display:none;min-height:100vh;}
+.page.on{display:block;}
 
-.job-card {
-  background:var(--card); border:1px solid var(--border); border-radius:var(--r);
-  overflow:hidden; display:flex; align-items:stretch;
-  cursor:pointer; transition:all .15s; position:relative;
-}
-.job-card:active { transform:scale(.985); }
-.job-card:hover  { border-color:var(--accent); }
+/* Detail */
+.detail-bar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;}
+.back-btn{background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer;padding:2px 6px;line-height:1;}
+.detail-title{flex:1;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dbody{padding:16px;display:flex;flex-direction:column;gap:14px;padding-bottom:100px;}
 
-.jc-img {
-  width:78px; flex-shrink:0; background:#0d0f1a;
-  display:flex; align-items:center; justify-content:center;
-  overflow:hidden;
-}
-.jc-img img { width:100%; height:100%; object-fit:cover; display:block; }
-.jc-img .noimg { font-size:26px; color:var(--border); }
-
-.jc-body { flex:1; padding:10px 12px; overflow:hidden; }
-.jc-row1 { display:flex; align-items:center; justify-content:space-between; margin-bottom:3px; }
-.jc-dept { font-size:15px; font-weight:700; color:var(--accent2); letter-spacing:.5px; }
-.jc-badge {
-  font-size:10px; padding:2px 8px; border-radius:10px; font-weight:600;
-  white-space:nowrap;
-}
-.badge-a { background:rgba(255,107,53,.15); color:var(--warn);   border:1px solid rgba(255,107,53,.3); }
-.badge-b { background:rgba(59,126,255,.12); color:var(--accent); border:1px solid rgba(59,126,255,.25); }
-.badge-c { background:rgba(122,130,160,.1); color:var(--muted);  border:1px solid var(--border); }
-
-.jc-detail { font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
-.jc-meta   { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-/* ── Empty / Loading ── */
-.empty { text-align:center; padding:60px 20px; color:var(--muted); }
-.empty .ei { font-size:48px; margin-bottom:12px; }
-.empty p   { font-size:13px; }
-
-.loading { display:flex; flex-direction:column; align-items:center; padding:60px 20px; gap:16px; }
-.spin {
-  width:34px; height:34px; border:3px solid var(--border);
-  border-top-color:var(--accent); border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-
-/* ═══════════════════════════════════════
-   DETAIL PAGE
-═══════════════════════════════════════ */
-.page { display:none; min-height:100vh; }
-.page.on { display:block; }
-
-.detail-bar {
-  position:sticky; top:0; z-index:100;
-  background:var(--surface); border-bottom:1px solid var(--border);
-  padding:12px 16px; display:flex; align-items:center; gap:12px;
-}
-.back-btn {
-  background:none; border:none; color:var(--accent);
-  font-size:22px; cursor:pointer; padding:2px 6px; line-height:1;
-}
-.detail-title { flex:1; font-size:15px; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-
-.dbody { padding:16px; display:flex; flex-direction:column; gap:14px; padding-bottom:100px; }
-
-/* Before image */
-.before-img {
-  border-radius:var(--r); overflow:hidden; background:var(--card);
-  border:1px solid var(--border); aspect-ratio:4/3;
-  display:flex; align-items:center; justify-content:center; position:relative;
-}
-.before-img img { width:100%; height:100%; object-fit:cover; display:block; }
-.before-img .no-photo {
-  display:flex; flex-direction:column; align-items:center; gap:8px;
-  font-size:40px; color:var(--border);
-}
-.before-img .no-photo span { font-size:12px; color:var(--muted); font-family:'Sarabun',sans-serif; }
-.before-label {
-  position:absolute; bottom:0; left:0; right:0;
-  background:rgba(0,0,0,.55); color:rgba(255,255,255,.7);
-  font-size:11px; text-align:center; padding:4px;
-}
+/* Before img */
+.before-img{border-radius:var(--r);overflow:hidden;background:var(--card);border:1px solid var(--border);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;}
+.before-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.no-photo{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:40px;color:var(--border);}
+.no-photo span{font-size:12px;color:var(--muted);font-family:'Sarabun',sans-serif;}
+.before-label{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:rgba(255,255,255,.7);font-size:11px;text-align:center;padding:4px;}
 
 /* Info card */
-.info-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
-.ic-head {
-  padding:7px 14px; font-size:11px; font-weight:700; letter-spacing:.5px;
-  color:var(--accent); background:rgba(59,126,255,.07);
-  border-bottom:1px solid var(--border); text-transform:uppercase;
-}
-.ic-row {
-  display:flex; padding:8px 14px; border-bottom:1px solid rgba(46,51,80,.4); gap:8px;
-}
-.ic-row:last-child { border-bottom:none; }
-.ic-lbl { font-size:12px; color:var(--muted); flex-shrink:0; width:88px; padding-top:1px; }
-.ic-val { font-size:13px; flex:1; word-break:break-word; }
-.ic-val.hl { color:var(--warn); font-weight:500; }
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.ic-head{padding:7px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--accent);background:rgba(59,126,255,.07);border-bottom:1px solid var(--border);text-transform:uppercase;}
+.ic-row{display:flex;padding:8px 14px;border-bottom:1px solid rgba(46,51,80,.4);gap:8px;}
+.ic-row:last-child{border-bottom:none;}
+.ic-lbl{font-size:12px;color:var(--muted);flex-shrink:0;width:88px;padding-top:1px;}
+.ic-val{font-size:13px;flex:1;word-break:break-word;}
+.ic-val.hl{color:var(--warn);font-weight:500;}
 
-/* Form section */
-.form-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; }
-.fc-head {
-  padding:7px 14px; font-size:11px; font-weight:700; letter-spacing:.5px;
-  color:var(--accent2); background:rgba(0,212,170,.06);
-  border-bottom:1px solid var(--border); text-transform:uppercase;
-}
-.fc-body { padding:14px; display:flex; flex-direction:column; gap:12px; }
+/* Form */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.fc-head{padding:7px 14px;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--accent2);background:rgba(0,212,170,.06);border-bottom:1px solid var(--border);text-transform:uppercase;}
+.fc-body{padding:14px;display:flex;flex-direction:column;gap:12px;}
+.flabel{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500;}
+.flabel .req{color:var(--danger);}
+input[type="date"],select,textarea{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:14px;outline:none;transition:border .2s;-webkit-appearance:none;appearance:none;}
+input[type="date"]:focus,select:focus,textarea:focus{border-color:var(--accent);}
+select option{background:var(--card);}
+textarea{resize:vertical;min-height:70px;}
 
-.flabel { display:block; font-size:12px; color:var(--muted); margin-bottom:5px; font-weight:500; }
-.flabel .req { color:var(--danger); }
+/* Date display BE */
+.date-display{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:14px;color:var(--text);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border .2s;}
+.date-display:hover{border-color:var(--accent);}
+.dd-val{color:var(--accent2);font-weight:500;}
+input#realDate{display:none;}
 
-input[type="date"], select, textarea {
-  width:100%; background:var(--surface); border:1px solid var(--border);
-  border-radius:8px; padding:10px 12px; color:var(--text);
-  font-family:'Sarabun',sans-serif; font-size:14px; outline:none;
-  transition:border .2s; -webkit-appearance:none; appearance:none;
-}
-input[type="date"]:focus, select:focus, textarea:focus { border-color:var(--accent); }
-select option { background:var(--card); }
-textarea { resize:vertical; min-height:70px; }
-
-/* Date display (BE) */
-.date-display {
-  background:var(--surface); border:1px solid var(--border); border-radius:8px;
-  padding:10px 12px; font-size:14px; color:var(--text);
-  display:flex; align-items:center; justify-content:space-between;
-  cursor:pointer; transition:border .2s;
-}
-.date-display:hover { border-color:var(--accent); }
-.date-display .dd-val { color:var(--accent2); font-weight:500; }
-.date-display .dd-ico { color:var(--muted); font-size:16px; }
-input#realDate { display:none; }
-
-/* Photo upload */
-.photo-area {
-  border:2px dashed var(--border); border-radius:10px; padding:16px;
-  display:flex; flex-direction:column; align-items:center; gap:10px;
-}
-.photo-area .pa-icon { font-size:30px; }
-.photo-area .pa-txt  { font-size:12px; color:var(--muted); text-align:center; }
-.photo-btns { display:flex; gap:8px; width:100%; }
-.pbtn {
-  flex:1; padding:9px; border-radius:8px; border:1px solid var(--border);
-  background:var(--surface); color:var(--text); font-family:'Sarabun',sans-serif;
-  font-size:13px; cursor:pointer; display:flex; align-items:center;
-  justify-content:center; gap:5px; transition:all .15s;
-}
-.pbtn:hover { border-color:var(--accent2); color:var(--accent2); }
-
-.preview-wrap { position:relative; border-radius:8px; overflow:hidden; aspect-ratio:4/3; background:var(--surface); }
-.preview-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-.preview-del {
-  position:absolute; top:6px; right:6px; background:rgba(0,0,0,.65);
-  color:#fff; border:none; border-radius:50%; width:28px; height:28px;
-  cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center;
-}
-#fc, #fg { display:none; }
+/* Photo */
+.photo-area{border:2px dashed var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.pa-icon{font-size:30px;} .pa-txt{font-size:12px;color:var(--muted);text-align:center;}
+.photo-btns{display:flex;gap:8px;width:100%;}
+.pbtn{flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;}
+.pbtn:hover{border-color:var(--accent2);color:var(--accent2);}
+.preview-wrap{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:4/3;background:var(--surface);}
+.preview-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.preview-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+#fc,#fg{display:none;}
 
 /* Save bar */
-.save-bar {
-  position:fixed; bottom:0; left:0; right:0;
-  padding:12px 16px; background:var(--surface);
-  border-top:1px solid var(--border); z-index:200;
-}
-.save-btn {
-  width:100%; padding:13px; border-radius:10px; border:none;
-  background:var(--accent); color:#fff; font-family:'Sarabun',sans-serif;
-  font-size:15px; font-weight:700; cursor:pointer; transition:all .15s;
-  display:flex; align-items:center; justify-content:center; gap:8px;
-}
-.save-btn:active   { transform:scale(.97); }
-.save-btn:disabled { background:var(--border); cursor:not-allowed; }
+.save-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:var(--surface);border-top:1px solid var(--border);z-index:200;}
+.save-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.save-btn:active{transform:scale(.97);}
+.save-btn.saving{background:var(--warn);}
+.save-btn:disabled{background:var(--border);cursor:not-allowed;}
 
 /* Toast */
-.toast {
-  position:fixed; bottom:90px; left:50%; transform:translateX(-50%) translateY(16px);
-  background:var(--card); color:var(--text); padding:10px 20px;
-  border-radius:20px; font-size:13px; border:1px solid var(--border);
-  opacity:0; transition:all .3s; pointer-events:none; z-index:999; white-space:nowrap;
-}
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-.toast.ok   { border-color:var(--success); color:var(--success); }
-.toast.err  { border-color:var(--danger); color:var(--danger); }
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card);color:var(--text);padding:10px 20px;border-radius:20px;font-size:13px;border:1px solid var(--border);opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--success);color:var(--success);}
+.toast.err{border-color:var(--danger);color:var(--danger);}
 
-/* First-sync overlay */
-.overlay {
-  display:none; position:fixed; inset:0; background:rgba(0,0,0,.8);
-  z-index:500; flex-direction:column; align-items:center; justify-content:center; gap:20px;
-}
-.overlay.show { display:flex; }
-.ov-txt  { font-size:14px; color:var(--muted); }
-.ov-bar  { width:200px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
-.ov-inner { height:100%; background:var(--accent); width:0; transition:width .4s; border-radius:2px; }
+/* Overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.overlay.show{display:flex;}
+.ov-txt{font-size:14px;color:var(--muted);}
+.ov-bar{width:200px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.ov-inner{height:100%;background:var(--accent);width:0;transition:width .4s;border-radius:2px;}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     PAGE 1 – List
-══════════════════════════════════════ -->
+<!-- PAGE 1 – List -->
 <div id="pgList" class="page on">
   <div class="topbar">
     <div class="topbar-info">
@@ -274,44 +150,33 @@ input#realDate { display:none; }
     </div>
     <div class="led" id="led1"></div>
   </div>
-
   <div class="search-wrap">
     <input class="search-box" id="searchInput" type="search"
-           placeholder="🔍  DOC NO / สถานที่ / รายละเอียด…"
-           oninput="doFilter()">
+           placeholder="🔍  DOC NO / สถานที่ / รายละเอียด…" oninput="doFilter()">
   </div>
-
   <div class="tabs">
-    <button class="tab on" id="tAll"     onclick="setTab('all')">ทั้งหมด</button>
-    <button class="tab"    id="tAck"     onclick="setTab('รับทราบ')">รับทราบ</button>
-    <button class="tab"    id="tWait"    onclick="setTab('รอจัดซื้ออุปกรณ์')">รอจัดซื้อ</button>
-    <button class="tab"    id="tNew"     onclick="setTab('new')">ใหม่</button>
+    <button class="tab on" id="tAll"  onclick="setTab('all')">ทั้งหมด</button>
+    <button class="tab"   id="tAck"  onclick="setTab('รับทราบ')">รับทราบ</button>
+    <button class="tab"   id="tWait" onclick="setTab('รอจัดซื้ออุปกรณ์')">รอจัดซื้อ</button>
+    <button class="tab"   id="tNew"  onclick="setTab('new')">ใหม่</button>
   </div>
-
   <div class="count-bar" id="countBar"></div>
   <div class="job-list" id="jobList">
     <div class="loading"><div class="spin"></div><span style="font-size:13px;color:var(--muted)">กำลังโหลด…</span></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     PAGE 2 – Detail
-══════════════════════════════════════ -->
+<!-- PAGE 2 – Detail -->
 <div id="pgDetail" class="page">
   <div class="detail-bar">
     <button class="back-btn" onclick="goList()">&#8592;</button>
     <div class="detail-title" id="dtTitle">รายละเอียด</div>
     <div class="led" id="led2"></div>
   </div>
-
   <div class="dbody">
-
-    <!-- รูปก่อนซ่อม -->
     <div class="before-img" id="beforeImg">
       <div class="no-photo">📷<span>ไม่มีรูปก่อนซ่อม</span></div>
     </div>
-
-    <!-- ข้อมูล -->
     <div class="info-card">
       <div class="ic-head">📋 ข้อมูลการแจ้งซ่อม</div>
       <div class="ic-row"><span class="ic-lbl">DOC NO.</span><span class="ic-val" id="iDocNo">–</span></div>
@@ -323,23 +188,17 @@ input#realDate { display:none; }
       <div class="ic-row"><span class="ic-lbl">รายละเอียด</span><span class="ic-val hl" id="iDetail">–</span></div>
       <div class="ic-row"><span class="ic-lbl">สถานะ</span><span class="ic-val" id="iProgress">–</span></div>
     </div>
-
-    <!-- ฟอร์ม -->
     <div class="form-card">
       <div class="fc-head">✏️ กรอกข้อมูลปิดงาน</div>
       <div class="fc-body">
-
-        <!-- วันที่เสร็จ -->
         <div>
           <label class="flabel">วันที่เสร็จ <span class="req">*</span></label>
           <div class="date-display" onclick="document.getElementById('realDate').showPicker()">
             <span id="dateDisplayTxt">เลือกวันที่…</span>
-            <span class="dd-ico">📅</span>
+            <span style="color:var(--muted)">📅</span>
           </div>
           <input type="date" id="realDate" onchange="onDateChange(this.value)">
         </div>
-
-        <!-- ความคืบหน้า -->
         <div>
           <label class="flabel">ความคืบหน้า <span class="req">*</span></label>
           <select id="fProg">
@@ -352,8 +211,6 @@ input#realDate { display:none; }
             <option>ยกเลิกการซ่อม</option>
           </select>
         </div>
-
-        <!-- ผู้ซ่อมหลัก -->
         <div>
           <label class="flabel">ผู้ซ่อมหลัก</label>
           <select id="fMain">
@@ -363,8 +220,6 @@ input#realDate { display:none; }
             <option>ช่างแลน</option><option>ช่างโบ้</option><option>ช่างเบียร์</option>
           </select>
         </div>
-
-        <!-- ผู้ช่วย 1 -->
         <div>
           <label class="flabel">ผู้ช่วยคนที่ 1</label>
           <select id="fT1">
@@ -374,8 +229,6 @@ input#realDate { display:none; }
             <option>ช่างแลน</option><option>ช่างโบ้</option><option>ช่างเบียร์</option>
           </select>
         </div>
-
-        <!-- ผู้ช่วย 2 -->
         <div>
           <label class="flabel">ผู้ช่วยคนที่ 2</label>
           <select id="fT2">
@@ -385,14 +238,10 @@ input#realDate { display:none; }
             <option>ช่างแลน</option><option>ช่างโบ้</option><option>ช่างเบียร์</option>
           </select>
         </div>
-
-        <!-- คำแนะนำ -->
         <div>
           <label class="flabel">คำแนะนำในการดูแลจากช่าง</label>
           <textarea id="fAdvice" placeholder="บันทึกคำแนะนำ…"></textarea>
         </div>
-
-        <!-- รูปหลังซ่อม -->
         <div>
           <label class="flabel">รูปหลังซ่อม</label>
           <div id="pvWrap" style="display:none" class="preview-wrap">
@@ -410,20 +259,15 @@ input#realDate { display:none; }
           <input type="file" id="fc" accept="image/*" capture="environment" onchange="handlePhoto(this)">
           <input type="file" id="fg" accept="image/*" onchange="handlePhoto(this)">
         </div>
-
       </div>
     </div>
-  </div><!-- /dbody -->
-
+  </div>
   <div class="save-bar">
     <button class="save-btn" id="saveBtn" onclick="doSave()">💾 บันทึกปิดงาน</button>
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
-
-<!-- First-sync overlay -->
 <div class="overlay" id="overlay">
   <div class="spin"></div>
   <div class="ov-txt" id="ovTxt">กำลังซิงค์ข้อมูลครั้งแรก…</div>
@@ -432,51 +276,56 @@ input#realDate { display:none; }
 
 <script>
 // ══════════════════════════════════════════════════
-//  ⚙️  CONFIG  –  ใส่ URL ของ Apps Script ที่ Deploy แล้ว
+//  ⚙️  CONFIG
 // ══════════════════════════════════════════════════
-var API_URL = "https://script.google.com/macros/s/AKfycbymxipvYzg63XJ6uzG37GO-CyGCt88bN2C1b_AAcafvHOOybjNGLvqeCIVdbDDxjcPd/exec";
-// ตัวอย่าง: "https://script.google.com/macros/s/AKfycby.../exec"
+var API = "https://script.google.com/macros/s/AKfycbymxipvYzg63XJ6uzG37GO-CyGCt88bN2C1b_AAcafvHOOybjNGLvqeCIVdbDDxjcPd/exec";
+// วางลิ้งค์ Deploy ที่นี่ เช่น:
+// var API = "https://script.google.com/macros/s/AKfycby.../exec";
 
 // ══════════════════════════════════════════════════
 var allJobs  = [];
 var shown    = [];
 var curJob   = null;
 var curTab   = "all";
-var photoObj = null;   // { base64, mime }
+var photoObj = null;
 
-var CACHE_KEY = "mj_jobs_v3";
+var CACHE_KEY   = "mj_jobs_v3";
 var DONE_STATUS = ["ดำเนินการเรียบร้อย","ติดต่อช่างนอก , ดำเนินการเรียบร้อย","ยกเลิกการซ่อม"];
 
-// ── Init ─────────────────────────────────────────
+// ── init ──────────────────────────────────────────
 window.addEventListener("load", function() {
   setLed("syncing");
-  // set วันที่วันนี้เป็น default
-  var now = new Date();
-  var iso = now.getFullYear() + "-" +
-    pad(now.getMonth()+1) + "-" + pad(now.getDate());
-  document.getElementById("realDate").value = iso;
-  onDateChange(iso);
-
+  setTodayDate();
   var cached = loadCache();
   if (cached && cached.length > 0) {
     allJobs = cached;
     doFilter();
-    syncBg(false);       // sync เบื้องหลัง
+    syncBg(false);
   } else {
     document.getElementById("overlay").classList.add("show");
-    syncBg(true);        // sync ครั้งแรก
+    syncBg(true);
   }
 });
 
-// ── Sync ─────────────────────────────────────────
+function setTodayDate() {
+  var n  = new Date();
+  var iso = n.getFullYear() + "-" + pad(n.getMonth()+1) + "-" + pad(n.getDate());
+  document.getElementById("realDate").value = iso;
+  onDateChange(iso);
+}
+
+// ── Sync (GET – ไม่มี CORS ปัญหา) ────────────────
 function syncBg(isFirst) {
   if (isFirst) setOvPct(20);
   setLed("syncing");
 
-  var url = API_URL + (API_URL.includes("?") ? "&" : "?") + "action=getPendingJobs&t=" + Date.now();
+  var url = API + "?action=getPendingJobs&_=" + Date.now();
 
-  fetch(url)
-    .then(function(r) { return r.json(); })
+  fetch(url, { method: "GET" })
+    .then(function(r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
     .then(function(res) {
       if (res.ok) {
         allJobs = res.jobs;
@@ -488,37 +337,168 @@ function syncBg(isFirst) {
           setTimeout(function(){ document.getElementById("overlay").classList.remove("show"); }, 400);
         }
       } else {
-        setLed("ok");
-        if (isFirst) document.getElementById("overlay").classList.remove("show");
-        toast("⚠️ " + res.msg, "err");
+        throw new Error(res.msg);
       }
     })
     .catch(function(err) {
       setLed("ok");
       if (isFirst) document.getElementById("overlay").classList.remove("show");
-      toast("❌ เชื่อมต่อไม่ได้: " + err.message, "err");
+      toast("❌ โหลดข้อมูลล้มเหลว: " + err.message, "err");
     });
 }
 
-// ── Cache ─────────────────────────────────────────
-function saveCache(j) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(j)); } catch(e){} }
-function loadCache()  { try { var d=localStorage.getItem(CACHE_KEY); return d?JSON.parse(d):null; } catch(e){return null;} }
+// ── Save (form POST – ไม่ถูก CORS บล็อก) ─────────
+// วิธีนี้ทำงานได้เพราะ:
+// 1. URLSearchParams → Content-Type: application/x-www-form-urlencoded
+// 2. Browser ไม่ส่ง preflight สำหรับ "simple request" นี้
+// 3. Apps Script รับ e.parameter ได้เลย
+// แต่ response จะเป็น opaque (no-cors) ถ้ามีปัญหา → ใช้ mode:"cors" ก่อน
+// ถ้า CORS error → fallback ใช้ Image beacon (fire-and-forget)
+function doSave() {
+  var prog = document.getElementById("fProg").value;
+  var dtTH = getDateTH();
+  if (!prog) { toast("⚠️ กรุณาเลือกความคืบหน้า", "err"); return; }
+  if (!dtTH) { toast("⚠️ กรุณาเลือกวันที่เสร็จ", "err"); return; }
 
-// ── LED ───────────────────────────────────────────
-function setLed(s) {
-  ["led1","led2"].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    el.className = "led" + (s==="syncing" ? " syncing" : s==="ok" ? " ok" : "");
+  var btn = document.getElementById("saveBtn");
+  btn.disabled = true;
+  btn.classList.add("saving");
+  btn.textContent = "⏳ กำลังบันทึก…";
+
+  // กลับหน้าแรกทันที (UX)
+  goList();
+  updateLocalCache(curJob.rowNum, prog);
+  doFilter();
+
+  var savedJob = curJob;  // เก็บ reference ก่อน curJob เปลี่ยน
+
+  // ── Step 1: อัพรูป (ถ้ามี) ────────────────────
+  if (photoObj && photoObj.base64) {
+    toast("📸 กำลังอัพรูป…", "");
+    setLed("syncing");
+
+    var uploadParams = new URLSearchParams({
+      action   : "uploadImage",
+      docNo    : savedJob.docNo,
+      imgBase64: photoObj.base64,
+      imgMime  : photoObj.mime
+    });
+
+    callAPI(uploadParams)
+      .then(function(res) {
+        if (!res.ok) throw new Error("Upload: " + res.msg);
+        // Step 2: บันทึกข้อมูล พร้อม imgPath
+        return saveData(savedJob, prog, dtTH, res.imgPath || "");
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error("Save: " + res.msg);
+        toast("✅ บันทึกสำเร็จ!", "ok");
+        syncBg(false);
+      })
+      .catch(function(err) {
+        toast("❌ " + err.message, "err");
+        setLed("ok");
+      })
+      .finally(function() {
+        resetSaveBtn();
+      });
+
+  } else {
+    // ── ไม่มีรูป บันทึกตรงเลย ───────────────────
+    setLed("syncing");
+    saveData(savedJob, prog, dtTH, "")
+      .then(function(res) {
+        if (!res.ok) throw new Error(res.msg);
+        toast("✅ บันทึกสำเร็จ!", "ok");
+        syncBg(false);
+      })
+      .catch(function(err) {
+        toast("❌ บันทึกล้มเหลว: " + err.message, "err");
+        setLed("ok");
+      })
+      .finally(function() {
+        resetSaveBtn();
+      });
+  }
+}
+
+function saveData(job, prog, dtTH, imgPath) {
+  var params = new URLSearchParams({
+    action    : "saveJob",
+    rowNum    : job.rowNum,
+    docNo     : job.docNo,
+    dateDoneTH: dtTH,
+    progress  : prog,
+    techMain  : document.getElementById("fMain").value,
+    tech1     : document.getElementById("fT1").value,
+    tech2     : document.getElementById("fT2").value,
+    advice    : document.getElementById("fAdvice").value,
+    imgPath   : imgPath
+  });
+  return callAPI(params);
+}
+
+// callAPI – ลองแบบ cors ก่อน ถ้าล้มเหลวให้ fallback เป็น GET
+function callAPI(urlSearchParams) {
+  // วิธี 1: POST form-urlencoded (ไม่ต้อง preflight สำหรับ simple request)
+  // Apps Script redirect 302 → fetch follow redirect → ได้ JSON
+  return fetch(API, {
+    method   : "POST",
+    body     : urlSearchParams
+    // ไม่ใส่ mode:"no-cors" เพราะถ้า no-cors จะอ่าน response ไม่ได้
+    // ไม่ใส่ Content-Type header เพราะ URLSearchParams set ให้อัตโนมัติ
+  })
+  .then(function(r) {
+    // Apps Script อาจ redirect ไปยัง URL อื่น fetch จะ follow auto
+    return r.json();
+  })
+  .catch(function(err) {
+    // Fallback: ส่งเป็น GET แทน (สำหรับ Chrome ที่บล็อก POST บางกรณี)
+    // ไม่รวม imgBase64 ใน GET fallback เพราะ URL ยาวเกิน
+    var qs = urlSearchParams.toString();
+    // ตัด imgBase64 ออกถ้าเป็น GET (ยาวเกิน)
+    var fallbackUrl = API + "?" + qs.replace(/&?imgBase64=[^&]*/g, "") + "&_=" + Date.now();
+    return fetch(fallbackUrl, { method: "GET" }).then(function(r){ return r.json(); });
   });
 }
 
-// ── Tab ───────────────────────────────────────────
+function resetSaveBtn() {
+  var btn = document.getElementById("saveBtn");
+  btn.disabled = false;
+  btn.classList.remove("saving");
+  btn.textContent = "💾 บันทึกปิดงาน";
+}
+
+// ── Cache ────────────────────────────────────────
+function saveCache(j) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(j)); } catch(e){} }
+function loadCache()  { try { var d=localStorage.getItem(CACHE_KEY); return d?JSON.parse(d):null; } catch(e){return null;} }
+
+function updateLocalCache(rowNum, prog) {
+  if (DONE_STATUS.indexOf(prog) !== -1) {
+    allJobs = allJobs.filter(function(j){ return j.rowNum !== rowNum; });
+  } else {
+    allJobs = allJobs.map(function(j){
+      if (j.rowNum === rowNum) j.progress = prog;
+      return j;
+    });
+  }
+  saveCache(allJobs);
+}
+
+// ── LED ──────────────────────────────────────────
+function setLed(s) {
+  ["led1","led2"].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.className = "led" + (s==="syncing"?" syncing":s==="ok"?" ok":"");
+  });
+}
+
+// ── Tab ──────────────────────────────────────────
 function setTab(t) {
   curTab = t;
   document.querySelectorAll(".tab").forEach(function(b){ b.classList.remove("on"); });
-  var ids = { all:"tAll", "รับทราบ":"tAck", "รอจัดซื้ออุปกรณ์":"tWait", new:"tNew" };
-  var el = document.getElementById(ids[t]);
+  var m = {all:"tAll","รับทราบ":"tAck","รอจัดซื้ออุปกรณ์":"tWait",new:"tNew"};
+  var el = document.getElementById(m[t]);
   if (el) el.classList.add("on");
   doFilter();
 }
@@ -534,41 +514,38 @@ function doFilter() {
     return (j.docNo+j.location+j.detail+j.dept+j.reporter).toLowerCase().includes(kw);
   });
 
-  var el = document.getElementById("jobList");
   document.getElementById("countBar").innerHTML = "พบ <b>" + shown.length + "</b> รายการ";
+  var el = document.getElementById("jobList");
 
   if (!shown.length) {
-    el.innerHTML = '<div class="empty"><div class="ei">🔍</div><p>ไม่พบรายการที่ตรงกัน</p></div>';
+    el.innerHTML = '<div class="empty"><div class="ei">🔍</div><p>ไม่พบรายการ</p></div>';
     return;
   }
 
   el.innerHTML = shown.map(function(j, i) {
-    var bc = j.progress==="รับทราบ" ? "badge-a" : j.progress==="รอจัดซื้ออุปกรณ์" ? "badge-b" : "badge-c";
+    var bc = j.progress==="รับทราบ"?"badge-a":j.progress==="รอจัดซื้ออุปกรณ์"?"badge-b":"badge-c";
     var bt = j.progress || "ใหม่";
     var img = j.imgBeforeUrl
-      ? '<img src="'+esc(j.imgBeforeUrl)+'" loading="lazy" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
-        + '<span class="noimg" style="display:none">📷</span>'
+      ? '<img src="'+esc(j.imgBeforeUrl)+'" loading="lazy"'
+        +' onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'">'
+        +'<span class="noimg" style="display:none">📷</span>'
       : '<span class="noimg">📷</span>';
-    return '<div class="job-card" onclick="openJob('+i+')">'
-      +'<div class="jc-img">'+img+'</div>'
-      +'<div class="jc-body">'
-        +'<div class="jc-row1">'
-          +'<span class="jc-dept">'+esc(j.dept)+'</span>'
-          +'<span class="jc-badge '+bc+'">'+esc(bt)+'</span>'
-        +'</div>'
-        +'<div class="jc-detail">'+esc(j.detail||j.location)+'</div>'
-        +'<div class="jc-meta">#'+esc(j.docNo)+' · '+esc(j.location)+' · '+esc(j.dateReport)+'</div>'
+    return '<div class="job-card" onclick="openJob('+i+')"><div class="jc-img">'+img+'</div>'
+      +'<div class="jc-body"><div class="jc-row1">'
+        +'<span class="jc-dept">'+esc(j.dept)+'</span>'
+        +'<span class="jc-badge '+bc+'">'+esc(bt)+'</span>'
       +'</div>'
-    +'</div>';
+      +'<div class="jc-detail">'+esc(j.detail||j.location)+'</div>'
+      +'<div class="jc-meta">#'+esc(j.docNo)+' · '+esc(j.location)+' · '+esc(j.dateReport)+'</div>'
+      +'</div></div>';
   }).join("");
 }
 
 // ── Open Detail ───────────────────────────────────
 function openJob(i) {
   curJob = shown[i];
-  var j  = curJob;
-
-  document.getElementById("dtTitle").textContent = j.dept + " – " + j.location;
+  var j = curJob;
+  document.getElementById("dtTitle").textContent   = j.dept + " – " + j.location;
   document.getElementById("iDocNo").textContent    = j.docNo;
   document.getElementById("iDateRep").textContent  = j.dateReport;
   document.getElementById("iDept").textContent     = j.dept;
@@ -578,7 +555,6 @@ function openJob(i) {
   document.getElementById("iDetail").textContent   = j.detail;
   document.getElementById("iProgress").textContent = j.progress || "(ใหม่)";
 
-  // รูปก่อน (col AN thumbnail URL)
   var bw = document.getElementById("beforeImg");
   if (j.imgBeforeUrl) {
     bw.innerHTML = '<img src="'+esc(j.imgBeforeUrl)+'"'
@@ -588,12 +564,10 @@ function openJob(i) {
     bw.innerHTML = '<div class="no-photo">📷<span>ไม่มีรูปก่อนซ่อม</span></div>';
   }
 
-  // pre-fill ช่าง
   document.getElementById("fMain").value   = j.techMain || "";
   document.getElementById("fT1").value     = j.tech1    || "";
   document.getElementById("fT2").value     = j.tech2    || "";
   document.getElementById("fAdvice").value = "";
-
   clearPhoto();
 
   document.getElementById("pgList").classList.remove("on");
@@ -606,31 +580,23 @@ function goList() {
   document.getElementById("pgList").classList.add("on");
 }
 
-// ── Date picker (แสดง พ.ศ.) ───────────────────────
+// ── Date ─────────────────────────────────────────
 function onDateChange(iso) {
   if (!iso) return;
-  var p  = iso.split("-");
-  var y  = parseInt(p[0]) + 543;
-  var m  = p[1];
-  var d  = p[2];
-  var be = d + "/" + m + "/" + y;
-  document.getElementById("dateDisplayTxt").textContent = be;
+  var p = iso.split("-");
+  document.getElementById("dateDisplayTxt").textContent = p[2]+"/"+p[1]+"/"+(parseInt(p[0])+543);
   document.getElementById("dateDisplayTxt").style.color = "var(--accent2)";
 }
-
 function getDateTH() {
-  // คืนค่า DD/MM/YYYY พ.ศ. จาก input realDate
   var iso = document.getElementById("realDate").value;
   if (!iso) return "";
-  var p  = iso.split("-");
-  var y  = parseInt(p[0]) + 543;
-  return p[2] + "/" + p[1] + "/" + y;
+  var p = iso.split("-");
+  return p[2]+"/"+p[1]+"/"+(parseInt(p[0])+543);
 }
 
 // ── Photo ─────────────────────────────────────────
 function handlePhoto(input) {
-  var f = input.files[0];
-  if (!f) return;
+  var f = input.files[0]; if (!f) return;
   var r = new FileReader();
   r.onload = function(e) {
     var durl = e.target.result;
@@ -638,8 +604,7 @@ function handlePhoto(input) {
     document.getElementById("pvWrap").style.display = "block";
     document.getElementById("photoArea").style.display = "none";
     var parts = durl.split(",");
-    var mime  = parts[0].match(/:(.*?);/)[1];
-    photoObj  = { base64: parts[1], mime: mime };
+    photoObj = { base64: parts[1], mime: parts[0].match(/:(.*?);/)[1] };
   };
   r.readAsDataURL(f);
   input.value = "";
@@ -651,73 +616,13 @@ function clearPhoto() {
   document.getElementById("pvImg").src = "";
 }
 
-// ── Save ──────────────────────────────────────────
-function doSave() {
-  var prog = document.getElementById("fProg").value;
-  var dtTH = getDateTH();
-  if (!prog) { toast("⚠️ กรุณาเลือกความคืบหน้า","err"); return; }
-  if (!dtTH) { toast("⚠️ กรุณาเลือกวันที่เสร็จ","err"); return; }
-
-  var payload = {
-    rowNum    : curJob.rowNum,
-    docNo     : curJob.docNo,
-    dateDoneTH: dtTH,                 // DD/MM/YYYY พ.ศ.
-    progress  : prog,
-    techMain  : document.getElementById("fMain").value,
-    tech1     : document.getElementById("fT1").value,
-    tech2     : document.getElementById("fT2").value,
-    advice    : document.getElementById("fAdvice").value,
-    imgBase64 : photoObj ? photoObj.base64 : "",
-    imgMime   : photoObj ? photoObj.mime   : ""
-  };
-
-  // กลับหน้าแรกทันที
-  goList();
-
-  // ถ้าปิดงานแล้ว → ลบออกจาก list
-  if (DONE_STATUS.indexOf(prog) !== -1) {
-    allJobs = allJobs.filter(function(j){ return j.rowNum !== curJob.rowNum; });
-  } else {
-    allJobs = allJobs.map(function(j){
-      if (j.rowNum === curJob.rowNum) j.progress = prog;
-      return j;
-    });
-  }
-  saveCache(allJobs);
-  doFilter();
-
-  // บันทึก background
-  setLed("syncing");
-  toast("⏳ กำลังบันทึก…", "");
-
-  fetch(API_URL, {
-    method  : "POST",
-    headers : { "Content-Type": "application/json" },
-    body    : JSON.stringify(payload)
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(res) {
-    if (res.ok) {
-      toast("✅ บันทึกสำเร็จ!", "ok");
-      syncBg(false);   // sync ใหม่
-    } else {
-      toast("❌ บันทึกล้มเหลว: " + res.msg, "err");
-      setLed("ok");
-    }
-  })
-  .catch(function(err) {
-    toast("❌ เชื่อมต่อล้มเหลว", "err");
-    setLed("ok");
-  });
-}
-
 // ── Utils ─────────────────────────────────────────
 function toast(msg, type) {
   var el = document.getElementById("toast");
   el.textContent = msg;
-  el.className = "toast show" + (type?" "+type:"");
+  el.className = "toast show" + (type ? " "+type : "");
   clearTimeout(el._t);
-  el._t = setTimeout(function(){ el.className="toast"; }, 3000);
+  el._t = setTimeout(function(){ el.className = "toast"; }, 3500);
 }
 function esc(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -725,8 +630,7 @@ function esc(s) {
 function pad(n) { return n<10?"0"+n:n; }
 function setOvPct(p) {
   document.getElementById("ovBar").style.width = p+"%";
-  document.getElementById("ovTxt").textContent =
-    p<50 ? "กำลังดึงข้อมูล…" : p<90 ? "ประมวลผล…" : "เสร็จแล้ว!";
+  document.getElementById("ovTxt").textContent = p<50?"กำลังดึงข้อมูล…":p<90?"ประมวลผล…":"เสร็จแล้ว!";
 }
 </script>
 </body>
