@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VOL CTRL">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>VOL CTRL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --panel: #111116;
+    --border: #2a2a35;
+    --accent: #e8ff47;
+    --accent2: #ff4f4f;
+    --text: #d4d4e0;
+    --dim: #55556a;
+    --glow: rgba(232,255,71,0.15);
+    --fader-h: 320px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow Condensed', sans-serif;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  /* ─── HEADER ─────────────────────────────── */
+  .header {
+    width: 100%;
+    padding: 14px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+  .header-title {
+    font-size: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 4px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .header-sub {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    line-height: 1;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--dim);
+    transition: background 0.3s, box-shadow 0.3s;
+    flex-shrink: 0;
+  }
+  .status-dot.online {
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+  .status-dot.error {
+    background: var(--accent2);
+    box-shadow: 0 0 10px var(--accent2);
+  }
+
+  /* ─── IP SETUP ────────────────────────────── */
+  .setup-bar {
+    width: 100%;
+    max-width: 420px;
+    padding: 10px 20px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ip-input {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    letter-spacing: 1px;
+  }
+  .ip-input:focus { border-color: var(--accent); }
+  .connect-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 8px 16px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .connect-btn:active { opacity: 0.7; }
+
+  /* ─── MAIN AREA ──────────────────────────── */
+  .main-area {
+    flex: 1;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    padding: 16px 20px 12px;
+    min-height: 0;
+  }
+
+  /* ─── FADER COLUMN ──────────────────────── */
+  .fader-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .vol-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--dim);
+    flex-shrink: 0;
+  }
+
+  .vol-number {
+    font-size: 80px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: var(--accent);
+    text-shadow: 0 0 50px var(--glow);
+    transition: color 0.3s;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .vol-number.muted { color: var(--accent2); text-shadow: 0 0 40px rgba(255,79,79,0.2); }
+  .vol-pct {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--dim);
+    vertical-align: super;
+    letter-spacing: 0;
+  }
+
+  /* ─── FADER TRACK ────────────────────────── */
+  .fader-wrap {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  .fader-track {
+    position: relative;
+    width: 56px;
+    height: 100%;
+    min-height: 160px;
+    max-height: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Track background */
+  .fader-bg {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    bottom: 20px;
+    width: 6px;
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  /* Fill (active portion, bottom to handle) */
+  .fader-fill {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    width: 6px;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: height 0.08s ease-out, background 0.3s;
+    pointer-events: none;
+  }
+  .fader-fill.muted { background: var(--accent2); }
+
+  /* Tick marks */
+  .fader-ticks {
+    position: absolute;
+    top: 20px;
+    bottom: 20px;
+    left: calc(50% + 10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .tick {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tick-line {
+    width: 6px;
+    height: 1px;
+    background: var(--border);
+  }
+  .tick-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 8px;
+    color: var(--dim);
+    letter-spacing: 0;
+    line-height: 1;
+  }
+
+  /* Handle (the knob you grab) */
+  .fader-handle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(50%);
+    bottom: 20px; /* set by JS */
+    width: 48px;
+    height: 24px;
+    background: var(--text);
+    border-radius: 3px;
+    cursor: grab;
+    transition: background 0.15s, box-shadow 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    pointer-events: none; /* track handles events */
+  }
+  .fader-handle::before,
+  .fader-handle::after,
+  .fader-handle .mid-line {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--bg);
+    opacity: 0.5;
+  }
+  .handle-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: none;
+  }
+  .handle-line {
+    width: 22px;
+    height: 1px;
+    background: rgba(10,10,12,0.6);
+    border-radius: 1px;
+  }
+  .fader-handle.dragging {
+    background: var(--accent);
+    box-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
+    cursor: grabbing;
+  }
+  .fader-handle.muted { background: var(--accent2); }
+
+  /* ─── RIGHT PANEL ────────────────────────── */
+  .right-panel {
+    width: 110px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: 16px;
+  }
+
+  /* Segment bar (vertical) */
+  .seg-bar-v {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 3px;
+    flex: 1;
+  }
+  .seg-v {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    background: var(--border);
+    border-radius: 1px;
+    transition: background 0.1s;
+  }
+  .seg-v.active { background: var(--accent); }
+  .seg-v.active.high { background: var(--accent2); }
+
+  /* Presets */
+  .presets-v {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+  .presets-label-v {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    margin-bottom: 2px;
+  }
+  .btn-preset-v {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--dim);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 8px 6px;
+    cursor: pointer;
+    transition: all 0.12s;
+    user-select: none;
+    -webkit-user-select: none;
+    text-align: center;
+    width: 100%;
+  }
+  .btn-preset-v span { font-size: 10px; font-weight: 300; }
+  .btn-preset-v:active {
+    background: #16161e;
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: scale(0.97);
+  }
+
+  /* ─── BOTTOM BAR ─────────────────────────── */
+  .bottom-bar {
+    width: 100%;
+    max-width: 420px;
+    padding: 0 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .vol-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-align: center;
+    min-height: 16px;
+    transition: color 0.3s;
+  }
+  .vol-status.muted { color: var(--accent2); }
+
+  /* Mute button */
+  .btn-mute {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--dim);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.12s;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .btn-mute .mute-icon { font-size: 20px; }
+  .btn-mute.is-muted {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(255,79,79,0.06);
+  }
+  .btn-mute:active { transform: scale(0.98); opacity: 0.8; }
+
+  /* ─── TOAST ───────────────────────────────── */
+  .toast {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 8px 20px;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1);
+    z-index: 99;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.err { border-color: var(--accent2); color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-title">AUDIO SYSTEM</div>
+    <div class="header-sub">VOL CTRL</div>
+  </div>
+  <div class="status-dot" id="statusDot"></div>
+</div>
+
+<!-- IP Setup -->
+<div class="setup-bar">
+  <input class="ip-input" id="ipInput" type="text"
+    placeholder="192.168.x.x:7788"
+    autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="connect-btn" onclick="connect()">CONN</button>
+</div>
+
+<!-- Main area: fader + segments + presets -->
+<div class="main-area">
+
+  <!-- Fader column -->
+  <div class="fader-col">
+    <div class="vol-label">MASTER</div>
+    <div class="vol-number" id="volNum">--<span class="vol-pct">%</span></div>
+    <div class="fader-wrap">
+      <div class="fader-track" id="faderTrack">
+        <div class="fader-bg"></div>
+        <div class="fader-fill" id="faderFill"></div>
+        <!-- tick marks -->
+        <div class="fader-ticks" id="faderTicks"></div>
+        <div class="fader-handle" id="faderHandle">
+          <div class="handle-lines">
+            <div class="handle-line"></div>
+            <div class="handle-line"></div>
+            <div class="handle-line"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel: segments + presets -->
+  <div class="right-panel">
+    <div class="seg-bar-v" id="segBarV"></div>
+    <div class="presets-v">
+      <div class="presets-label-v">PRESET</div>
+      <button class="btn-preset-v" onclick="setVol(25)">25<span>%</span></button>
+      <button class="btn-preset-v" onclick="setVol(50)">50<span>%</span></button>
+      <button class="btn-preset-v" onclick="setVol(75)">75<span>%</span></button>
+      <button class="btn-preset-v" onclick="setVol(100)">100<span>%</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar">
+  <div class="vol-status" id="volStatus">DISCONNECTED</div>
+  <button class="btn-mute" id="muteBtn" onclick="toggleMute()">
+    <span class="mute-icon" id="muteIcon">🔊</span>
+    <span id="muteLabel">MUTE</span>
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──────────────────────────────────────
+let serverURL = "";
+let curVol = 0;
+let isMuted = false;
+let pollTimer = null;
+
+// ── Init vertical segments ─────────────────────
+const segBarV = document.getElementById("segBarV");
+const SEG_COUNT = 16;
+for (let i = 0; i < SEG_COUNT; i++) {
+  const s = document.createElement("div");
+  s.className = "seg-v";
+  s.id = "segV" + i;
+  segBarV.appendChild(s);
+}
+
+// ── Init fader ticks ────────────────────────────
+const ticksEl = document.getElementById("faderTicks");
+const tickVals = [100, 75, 50, 25, 0];
+tickVals.forEach(v => {
+  const t = document.createElement("div");
+  t.className = "tick";
+  t.innerHTML = `<div class="tick-line"></div><div class="tick-label">${v}</div>`;
+  ticksEl.appendChild(t);
+});
+
+// ── Fader logic ─────────────────────────────────
+const faderTrack = document.getElementById("faderTrack");
+const faderHandle = document.getElementById("faderHandle");
+const faderFill = document.getElementById("faderFill");
+
+let dragging = false;
+let dragStartY = 0;
+let dragStartVol = 0;
+
+function getTrackBounds() {
+  const rect = faderTrack.getBoundingClientRect();
+  const pad = 20;
+  return {
+    top: rect.top + pad,
+    bottom: rect.bottom - pad,
+    height: rect.height - pad * 2
+  };
+}
+
+function volToY(vol, bounds) {
+  // vol 0 → bottom (bounds.bottom), vol 100 → top (bounds.top)
+  return bounds.height * (1 - vol / 100);
+}
+
+function updateFaderPosition(vol) {
+  const bounds = getTrackBounds();
+  const trackH = bounds.height;
+  const fillH = trackH * (vol / 100);
+  faderFill.style.height = fillH + "px";
+  // handle bottom offset from track bottom (pad=20)
+  const handleBottom = 20 + fillH - 12; // 12 = half handle height
+  faderHandle.style.bottom = handleBottom + "px";
+  faderHandle.style.transform = "translateX(-50%)";
+}
+
+// Touch / mouse drag on track
+function startDrag(clientY) {
+  dragging = true;
+  dragStartY = clientY;
+  dragStartVol = curVol;
+  faderHandle.classList.add("dragging");
+}
+
+function moveDrag(clientY) {
+  if (!dragging) return;
+  const bounds = getTrackBounds();
+  const dy = dragStartY - clientY; // positive = up = more volume
+  const delta = (dy / bounds.height) * 100;
+  let newVol = Math.round(Math.max(0, Math.min(100, dragStartVol + delta)));
+  if (newVol !== curVol) {
+    curVol = newVol;
+    renderVolUI(curVol, isMuted);
+    sendVolDebounced(newVol);
+  }
+}
+
+function endDrag() {
+  if (!dragging) return;
+  dragging = false;
+  faderHandle.classList.remove("dragging");
+}
+
+// Also support tap on track to jump volume
+function tapTrack(clientY) {
+  const bounds = getTrackBounds();
+  const relY = clientY - bounds.top;
+  const newVol = Math.round(Math.max(0, Math.min(100, (1 - relY / bounds.height) * 100)));
+  curVol = newVol;
+  renderVolUI(curVol, isMuted);
+  sendVolDebounced(newVol);
+}
+
+faderTrack.addEventListener("touchstart", e => {
+  e.preventDefault();
+  const t = e.touches[0];
+  startDrag(t.clientY);
+}, { passive: false });
+
+faderTrack.addEventListener("touchmove", e => {
+  e.preventDefault();
+  moveDrag(e.touches[0].clientY);
+}, { passive: false });
+
+faderTrack.addEventListener("touchend", e => {
+  e.preventDefault();
+  endDrag();
+  sendVolNow(curVol);
+}, { passive: false });
+
+faderTrack.addEventListener("mousedown", e => {
+  startDrag(e.clientY);
+});
+window.addEventListener("mousemove", e => { if (dragging) moveDrag(e.clientY); });
+window.addEventListener("mouseup", () => { if (dragging) { endDrag(); sendVolNow(curVol); } });
+
+// ── Debounce volume send ─────────────────────────
+let volSendTimer = null;
+function sendVolDebounced(v) {
+  clearTimeout(volSendTimer);
+  volSendTimer = setTimeout(() => sendVolNow(v), 120);
+}
+async function sendVolNow(v) {
+  const data = await apiFetch(`/set?v=${v}`);
+  if (data) updateUI(data, true);
+}
+
+// ── Helpers ─────────────────────────────────────
+function getBase() {
+  let v = document.getElementById("ipInput").value.trim();
+  if (!v) return null;
+  if (!v.startsWith("http")) v = "http://" + v;
+  return v.replace(/\/$/, "");
+}
+
+async function apiFetch(path) {
+  const base = getBase();
+  if (!base) { showToast("กรอก IP ก่อน", true); return null; }
+  try {
+    const res = await fetch(base + path, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return await res.json();
+  } catch (e) {
+    setOffline();
+    return null;
+  }
+}
+
+function renderVolUI(vol, muted) {
+  const numEl = document.getElementById("volNum");
+  numEl.innerHTML = vol + '<span class="vol-pct">%</span>';
+  numEl.className = "vol-number" + (muted ? " muted" : "");
+
+  faderFill.className = "fader-fill" + (muted ? " muted" : "");
+  faderHandle.className = "fader-handle" + (dragging ? " dragging" : "") + (muted ? " muted" : "");
+
+  updateFaderPosition(vol);
+
+  // vertical segments
+  const active = Math.round((vol / 100) * SEG_COUNT);
+  for (let i = 0; i < SEG_COUNT; i++) {
+    const el = document.getElementById("segV" + i);
+    el.className = "seg-v" + (i < active ? (" active" + (i >= 12 ? " high" : "")) : "");
+  }
+}
+
+function updateUI(data, skipFaderAnim) {
+  if (!data) return;
+  curVol = data.volume;
+  isMuted = data.muted;
+
+  renderVolUI(curVol, isMuted);
+
+  // mute button
+  const muteBtn = document.getElementById("muteBtn");
+  const muteIcon = document.getElementById("muteIcon");
+  const muteLabel = document.getElementById("muteLabel");
+  if (isMuted) {
+    muteBtn.classList.add("is-muted");
+    muteIcon.textContent = "🔇";
+    muteLabel.textContent = "UNMUTE";
+  } else {
+    muteBtn.classList.remove("is-muted");
+    muteIcon.textContent = "🔊";
+    muteLabel.textContent = "MUTE";
+  }
+
+  const statusEl = document.getElementById("volStatus");
+  statusEl.textContent = isMuted ? "MUTED" : "LIVE";
+  statusEl.className = "vol-status" + (isMuted ? " muted" : "");
+
+  setOnline();
+}
+
+function setOnline() {
+  document.getElementById("statusDot").className = "status-dot online";
+}
+function setOffline() {
+  document.getElementById("statusDot").className = "status-dot error";
+  document.getElementById("volStatus").textContent = "OFFLINE";
+}
+
+let toastTimer;
+function showToast(msg, isErr = false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "toast show" + (isErr ? " err" : "");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = "toast"; }, 1800);
+}
+
+// ── Connect ──────────────────────────────────────
+async function connect() {
+  const base = getBase();
+  if (!base) { showToast("กรอก IP:PORT ก่อน", true); return; }
+  localStorage.setItem("vol_server", document.getElementById("ipInput").value.trim());
+  const data = await apiFetch("/status");
+  if (data) {
+    updateUI(data);
+    showToast("เชื่อมต่อแล้ว");
+    startPolling();
+  }
+}
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    const data = await apiFetch("/status");
+    if (data) updateUI(data);
+  }, 2000);
+}
+
+// ── Volume actions ───────────────────────────────
+async function volUp(step) {
+  const data = await apiFetch(`/up?step=${step}`);
+  if (data) { updateUI(data); showToast(`+${step}`); }
+}
+async function volDown(step) {
+  const data = await apiFetch(`/down?step=${step}`);
+  if (data) { updateUI(data); showToast(`-${step}`); }
+}
+async function setVol(v) {
+  const data = await apiFetch(`/set?v=${v}`);
+  if (data) { updateUI(data); showToast(`SET ${v}%`); }
+}
+async function toggleMute() {
+  const data = await apiFetch("/toggle_mute");
+  if (data) { updateUI(data); showToast(data.muted ? "MUTED" : "UNMUTED"); }
+}
+
+// ── On load ──────────────────────────────────────
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("vol_server");
+  if (saved) {
+    document.getElementById("ipInput").value = saved;
+    connect();
+  }
+  // init fader at 0
+  requestAnimationFrame(() => updateFaderPosition(0));
+});
+
+// Resize → reposition fader handle
+window.addEventListener("resize", () => {
+  updateFaderPosition(curVol);
+});
+
+// ── Service Worker ───────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
