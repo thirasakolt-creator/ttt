@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VOL CTRL">
+<meta name="theme-color" content="#1a1a1a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>VOL CTRL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1c1c1e;
+  --panel: #252528;
+  --panel2: #2e2e32;
+  --border: #3a3a40;
+  --border2: #48484f;
+  --screw: #3d3d42;
+  --accent-green: #39ff14;
+  --accent-yellow: #ffe033;
+  --accent-red: #ff3b30;
+  --accent-orange: #ff9500;
+  --led-green: #00e676;
+  --led-yellow: #ffeb3b;
+  --led-red: #ff1744;
+  --text: #d0d0d8;
+  --dim: #606070;
+  --lcd-bg: #0d1a0d;
+  --lcd-green: #33ff33;
+  --knob: #404048;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #111113;
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  touch-action: none;
+  /* Subtle brushed metal texture via gradient */
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.008) 2px,
+    rgba(255,255,255,0.008) 4px
+  );
+}
+
+/* ── HEADER ─────────────────────────────────── */
+.header {
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 16px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--panel);
+  border-bottom: 2px solid #000;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.brand-sub {
+  font-size: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 5px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.brand-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: var(--text);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #333;
+  transition: all 0.3s;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+}
+.status-dot.online {
+  background: var(--led-green);
+  box-shadow: 0 0 6px var(--led-green), 0 0 12px rgba(0,230,118,0.4);
+}
+.status-dot.error {
+  background: var(--led-red);
+  box-shadow: 0 0 6px var(--led-red);
+}
+
+/* ── SETUP BAR ──────────────────────────────── */
+.setup-bar {
+  width: 100%;
+  max-width: 420px;
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-bottom: 1px solid #000;
+}
+.ip-input {
+  flex: 1;
+  background: #0a0a0c;
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--border2);
+  color: var(--lcd-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  padding: 7px 10px;
+  outline: none;
+  letter-spacing: 1px;
+  border-radius: 3px;
+}
+.ip-input:focus { border-color: var(--led-green); }
+.connect-btn {
+  background: linear-gradient(180deg, #3a3a3f 0%, #252528 100%);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  border-bottom: 2px solid #000;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.1s;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.connect-btn:active {
+  background: linear-gradient(180deg, #252528 0%, #1a1a1e 100%);
+  border-bottom-width: 1px;
+  transform: translateY(1px);
+  color: var(--led-green);
+}
+
+/* ── MAIN AREA ──────────────────────────────── */
+.main-area {
+  flex: 1;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  min-height: 0;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* ── FADER COLUMN ───────────────────────────── */
+.fader-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0 12px 16px;
+  gap: 8px;
+  min-height: 0;
+}
+
+/* LCD Display */
+.lcd-display {
+  width: 100%;
+  background: var(--lcd-bg);
+  border: 1px solid #1a2e1a;
+  border-radius: 3px;
+  padding: 6px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 0 0 1px #0a0a0a;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.lcd-display::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+}
+.lcd-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 6px;
+  color: rgba(51,255,51,0.4);
+  text-transform: uppercase;
+}
+.lcd-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--lcd-green);
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(51,255,51,0.6), 0 0 30px rgba(51,255,51,0.2);
+  letter-spacing: -1px;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+.lcd-value.muted {
+  color: var(--accent-red);
+  text-shadow: 0 0 10px rgba(255,59,48,0.6);
+}
+.lcd-pct { font-size: 16px; font-weight: 400; opacity: 0.7; }
+
+/* Fader track area */
+.fader-section {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  position: relative;
+}
+
+/* Rail chassis */
+.fader-chassis {
+  position: relative;
+  width: 68px;
+  height: 100%;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* dB scale left of fader */
+.db-scale {
+  position: absolute;
+  left: -28px;
+  top: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  align-items: flex-end;
+}
+.db-mark {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.db-tick {
+  width: 5px;
+  height: 1px;
+  background: var(--border2);
+}
+.db-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  color: var(--dim);
+  line-height: 1;
+  text-align: right;
+  min-width: 20px;
+}
+
+/* Track rail */
+.fader-rail {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 16px;
+  bottom: 16px;
+  width: 8px;
+  background: #0a0a0c;
+  border-radius: 4px;
+  border: 1px solid #000;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
+}
+.fader-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  background: linear-gradient(180deg, var(--accent-green) 0%, rgba(57,255,20,0.6) 100%);
+  border-radius: 0 0 3px 3px;
+  transition: height 0.08s ease-out, background 0.3s;
+}
+.fader-fill.muted {
+  background: linear-gradient(180deg, var(--accent-red) 0%, rgba(255,59,48,0.5) 100%);
+}
+
+/* Fader thumb — professional looking */
+.fader-track {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 16px;
+  bottom: 16px;
+  width: 60px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.fader-handle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 58px;
+  height: 36px;
+  background: linear-gradient(180deg, #5a5a62 0%, #3a3a40 40%, #2e2e34 60%, #3e3e46 100%);
+  border-radius: 4px;
+  border: 1px solid #5a5a65;
+  border-bottom-color: #1a1a20;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.6),
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    0 -1px 0 rgba(0,0,0,0.4) inset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  pointer-events: none;
+  transition: background 0.1s, box-shadow 0.1s;
+}
+.handle-grip {
+  width: 32px;
+  height: 1px;
+  background: rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  border-radius: 1px;
+}
+.handle-center {
+  width: 32px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  border-top: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(0,0,0,0.4);
+  border-radius: 1px;
+}
+.fader-handle.dragging {
+  background: linear-gradient(180deg, #6a6a72 0%, #484850 40%, #3e3e46 60%, #4e4e56 100%);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.4),
+    0 0 12px rgba(57,255,20,0.15),
+    0 1px 0 rgba(255,255,255,0.12) inset;
+}
+.fader-handle.muted { border-color: rgba(255,59,48,0.3); }
+
+/* ── VU METER COLUMN ──────────────────────── */
+.vu-col {
+  width: 52px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 8px 12px 0;
+  gap: 4px;
+  align-items: center;
+  min-height: 0;
+}
+.vu-label-row {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  flex-shrink: 0;
+}
+.vu-ch-label {
+  flex: 1;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+.vu-meters {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  gap: 3px;
+  min-height: 0;
+}
+.vu-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+}
+.vu-seg {
+  flex: 1;
+  border-radius: 1px;
+  background: #1a1a1e;
+  border: 1px solid #0a0a0c;
+  transition: background 0.05s, box-shadow 0.05s;
+  min-height: 3px;
+}
+/* green zone (0-60%) */
+.vu-seg.on-green {
+  background: var(--led-green);
+  border-color: #009944;
+  box-shadow: 0 0 3px rgba(0,230,118,0.5);
+}
+/* yellow zone (60-80%) */
+.vu-seg.on-yellow {
+  background: var(--led-yellow);
+  border-color: #c8a800;
+  box-shadow: 0 0 3px rgba(255,235,59,0.6);
+}
+/* red zone (80-100%) */
+.vu-seg.on-red {
+  background: var(--led-red);
+  border-color: #c0001a;
+  box-shadow: 0 0 4px rgba(255,23,68,0.7);
+}
+
+/* Clip LED at top */
+.clip-leds {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  flex-shrink: 0;
+}
+.clip-led {
+  flex: 1;
+  height: 8px;
+  background: #1a1a1e;
+  border: 1px solid #0a0a0c;
+  border-radius: 2px;
+  transition: all 0.1s;
+}
+.clip-led.clip-on {
+  background: var(--led-red);
+  box-shadow: 0 0 6px var(--led-red);
+}
+
+/* ── BOTTOM SECTION ─────────────────────────── */
+.bottom-section {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border-top: 2px solid #000;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Preset row */
+.preset-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.preset-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 5px;
+  color: var(--dim);
+  text-align: center;
+}
+.preset-row {
+  display: flex;
+  gap: 6px;
+}
+.btn-preset {
+  flex: 1;
+  background: linear-gradient(180deg, #333337 0%, #252528 100%);
+  border: 1px solid var(--border2);
+  border-bottom: 2px solid #0a0a0c;
+  color: var(--text);
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0px;
+  padding: 9px 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.08s;
+  user-select: none;
+  -webkit-user-select: none;
+  text-align: center;
+  position: relative;
+}
+.btn-preset:active {
+  background: linear-gradient(180deg, #1e1e22 0%, #252528 100%);
+  border-bottom-width: 1px;
+  transform: translateY(1px);
+  color: var(--led-green);
+  box-shadow: 0 0 8px rgba(0,230,118,0.15) inset;
+}
+.btn-preset .preset-pct { font-size: 8px; font-weight: 400; opacity: 0.6; }
+
+/* Mute + controls row */
+.controls-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+/* Big mute button */
+.btn-mute {
+  flex: 1;
+  background: linear-gradient(180deg, #333337 0%, #252528 100%);
+  border: 1px solid var(--border2);
+  border-bottom: 3px solid #0a0a0c;
+  color: var(--dim);
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 3px;
+  padding: 14px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 4px;
+  transition: all 0.08s;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.mute-led {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #222;
+  border: 1px solid #000;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.btn-mute.is-muted {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+  background: linear-gradient(180deg, #2a1515 0%, #1e1010 100%);
+}
+.btn-mute.is-muted .mute-led {
+  background: var(--led-red);
+  box-shadow: 0 0 6px var(--led-red);
+}
+.btn-mute:not(.is-muted) .mute-led {
+  background: #333;
+}
+.btn-mute:active {
+  transform: translateY(1px);
+  border-bottom-width: 2px;
+}
+
+/* Side buttons (PFL/SOLO) */
+.side-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.btn-side {
+  background: linear-gradient(180deg, #303036 0%, #222226 100%);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid #000;
+  color: var(--dim);
+  font-family: 'Orbitron', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.08s;
+  user-select: none;
+  -webkit-user-select: none;
+  white-space: nowrap;
+}
+.btn-side.active {
+  color: var(--accent-yellow);
+  border-color: var(--accent-yellow);
+  background: linear-gradient(180deg, #2a2810 0%, #1e1c08 100%);
+  box-shadow: 0 0 8px rgba(255,224,51,0.15) inset;
+}
+.btn-side:active { transform: translateY(1px); border-bottom-width: 1px; }
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 2px 0 0;
+}
+.vol-status {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--dim);
+  transition: color 0.3s;
+}
+.vol-status.muted { color: var(--accent-red); }
+.vol-status.live { color: var(--led-green); }
+
+/* ── TOAST ──────────────────────────────────── */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-80px);
+  background: var(--panel2);
+  border: 1px solid var(--border2);
+  border-top: 2px solid var(--led-green);
+  color: var(--led-green);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  padding: 8px 20px;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(.16,1,.3,1);
+  z-index: 99;
+  white-space: nowrap;
+  border-radius: 3px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.err { border-top-color: var(--led-red); color: var(--led-red); }
+
+/* ── TAB BAR ────────────────────────────────── */
+.tab-bar {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  background: #0a0a0c;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--dim);
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 8px 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  user-select: none;
+}
+.tab-btn.active {
+  color: var(--led-green);
+  border-bottom-color: var(--led-green);
+}
+.tab-btn:active { opacity: 0.7; }
+
+/* ── VIEWS ──────────────────────────────────── */
+.view { display: none; flex: 1; flex-direction: column; min-height: 0; width: 100%; max-width: 420px; }
+.view.active { display: flex; }
+
+/* ── APP MIXER VIEW ─────────────────────────── */
+.apps-view {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0 16px;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+/* Refresh button row */
+.apps-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.apps-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+.btn-refresh {
+  background: linear-gradient(180deg,#333337 0%,#252528 100%);
+  border: 1px solid var(--border2);
+  border-bottom: 2px solid #000;
+  color: var(--text);
+  font-family: 'Orbitron', monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.08s;
+  user-select: none;
+}
+.btn-refresh:active { transform: translateY(1px); border-bottom-width: 1px; color: var(--led-green); }
+
+/* Empty state */
+.apps-empty {
+  padding: 40px 20px;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--dim);
+}
+
+/* App channel strip */
+.app-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 14px 12px;
+  border-bottom: 1px solid #1a1a1e;
+}
+.app-strip:last-child { border-bottom: none; }
+.app-strip.is-muted { opacity: 0.5; }
+
+/* Top row: icon + name + value + mute btn */
+.app-top-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.app-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #2a2a30, #1a1a1e);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  letter-spacing: 0;
+}
+.app-name {
+  flex: 1;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.app-vol-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--lcd-green);
+  min-width: 36px;
+  text-align: right;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+.app-vol-num.muted { color: var(--accent-red); }
+.btn-app-mute {
+  width: 44px; height: 26px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.08s;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.btn-app-mute.is-muted {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+  background: rgba(255,59,48,0.08);
+}
+.btn-app-mute:active { opacity: 0.7; }
+
+/* ── HORIZONTAL FADER ───────────────────────── */
+.h-fader-wrap {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* Rail */
+.h-fader-rail {
+  position: absolute;
+  left: 0; right: 0;
+  height: 6px;
+  background: #0a0a0c;
+  border-radius: 3px;
+  border: 1px solid #000;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+/* Fill */
+.h-fader-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(57,255,20,0.7) 0%, var(--accent-green) 100%);
+  border-radius: 3px 0 0 3px;
+  transition: width 0.05s linear, background 0.3s;
+  pointer-events: none;
+}
+.h-fader-fill.muted {
+  background: linear-gradient(90deg, rgba(255,59,48,0.5) 0%, var(--accent-red) 100%);
+}
+.h-fader-fill.high {
+  background: linear-gradient(90deg, rgba(57,255,20,0.7) 0%, var(--led-yellow) 100%);
+}
+.h-fader-fill.clip {
+  background: linear-gradient(90deg, var(--led-yellow) 0%, var(--led-red) 100%);
+}
+/* Thumb */
+.h-fader-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 34px;
+  background: linear-gradient(180deg, #5e5e66 0%, #3c3c44 40%, #30303a 60%, #444450 100%);
+  border: 1px solid #606068;
+  border-bottom-color: #1a1a22;
+  border-radius: 4px;
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.7),
+    0 1px 0 rgba(255,255,255,0.08) inset,
+    0 -1px 0 rgba(0,0,0,0.4) inset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  pointer-events: none;
+  transition: background 0.1s;
+  z-index: 2;
+}
+.h-thumb-grip {
+  width: 1px; height: 16px;
+  background: rgba(0,0,0,0.5);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  border-radius: 1px;
+}
+.h-fader-wrap.dragging .h-fader-thumb {
+  background: linear-gradient(180deg, #6e6e76 0%, #4c4c54 40%, #404048 60%, #545460 100%);
+  box-shadow:
+    0 2px 6px rgba(0,0,0,0.5),
+    0 0 10px rgba(57,255,20,0.2),
+    0 1px 0 rgba(255,255,255,0.12) inset;
+}
+
+/* Corner screws decoration */
+.main-area { position: relative; }
+.screw {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #5a5a60, #2a2a30);
+  border: 1px solid #1a1a1e;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.1);
+  z-index: 5;
+}
+.screw::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 15%;
+  width: 70%; height: 1px;
+  background: rgba(0,0,0,0.5);
+  transform: translateY(-50%) rotate(45deg);
+}
+.screw.tl { top: 6px; left: 6px; }
+.screw.tr { top: 6px; right: 6px; }
+.screw.bl { bottom: 6px; left: 6px; }
+.screw.br { bottom: 6px; right: 6px; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="brand">
+    <div class="brand-sub">AUDIO SYSTEM</div>
+    <div class="brand-title">VOL CTRL</div>
+  </div>
+  <div class="header-right">
+    <div class="status-dot" id="statusDot"></div>
+  </div>
+</div>
+
+<!-- IP Setup -->
+<div class="setup-bar">
+  <input class="ip-input" id="ipInput" type="text"
+    placeholder="192.168.x.x:7788"
+    autocomplete="off" autocorrect="off" spellcheck="false">
+  <button class="connect-btn" onclick="connect()">CONN</button>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tabMaster" onclick="switchTab('master')">MASTER</button>
+  <button class="tab-btn" id="tabApps" onclick="switchTab('apps')">APPS</button>
+</div>
+
+<!-- ═══════ VIEW: MASTER ═══════ -->
+<div class="view active" id="viewMaster">
+
+<!-- Main area: Fader + VU Meter -->
+<div class="main-area">
+  <div class="screw tl"></div>
+  <div class="screw tr"></div>
+  <div class="screw bl"></div>
+  <div class="screw br"></div>
+
+  <!-- Fader Column -->
+  <div class="fader-col">
+    <!-- LCD -->
+    <div class="lcd-display">
+      <div class="lcd-label">MASTER</div>
+      <div class="lcd-value" id="volNum">--<span class="lcd-pct">%</span></div>
+    </div>
+
+    <!-- Fader -->
+    <div class="fader-section">
+      <div class="fader-chassis">
+        <!-- dB Scale -->
+        <div class="db-scale" id="dbScale"></div>
+        <!-- Rail -->
+        <div class="fader-rail">
+          <div class="fader-fill" id="faderFill"></div>
+        </div>
+        <!-- Draggable track -->
+        <div class="fader-track" id="faderTrack">
+          <div class="fader-handle" id="faderHandle">
+            <div class="handle-grip"></div>
+            <div class="handle-center"></div>
+            <div class="handle-grip"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VU Meter Column -->
+  <div class="vu-col">
+    <div class="clip-leds">
+      <div class="clip-led" id="clipL"></div>
+      <div class="clip-led" id="clipR"></div>
+    </div>
+    <div class="vu-label-row">
+      <div class="vu-ch-label">L</div>
+      <div class="vu-ch-label">R</div>
+    </div>
+    <div class="vu-meters">
+      <div class="vu-bar" id="vuBarL"></div>
+      <div class="vu-bar" id="vuBarR"></div>
+    </div>
+    <div class="vu-label-row">
+      <div class="vu-ch-label">L</div>
+      <div class="vu-ch-label">R</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Section -->
+<div class="bottom-section">
+  <!-- Presets -->
+  <div class="preset-section">
+    <div class="preset-label">PRESET</div>
+    <div class="preset-row">
+      <button class="btn-preset" onclick="setVol(25)">25<span class="preset-pct">%</span></button>
+      <button class="btn-preset" onclick="setVol(50)">50<span class="preset-pct">%</span></button>
+      <button class="btn-preset" onclick="setVol(75)">75<span class="preset-pct">%</span></button>
+      <button class="btn-preset" onclick="setVol(100)">100<span class="preset-pct">%</span></button>
+    </div>
+  </div>
+
+  <!-- Mute + side buttons -->
+  <div class="controls-row">
+    <button class="btn-mute" id="muteBtn" onclick="toggleMute()">
+      <div class="mute-led" id="muteLed"></div>
+      <span id="muteLabel">MUTE</span>
+    </button>
+    <div class="side-btns">
+      <button class="btn-side" id="pflBtn" onclick="togglePFL()">PFL</button>
+      <button class="btn-side" id="soloBtn" onclick="toggleSolo()">SOLO</button>
+    </div>
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <div class="vol-status" id="volStatus">DISCONNECTED</div>
+  </div>
+</div><!-- /bottom-section -->
+
+</div><!-- /viewMaster -->
+
+<!-- ═══════ VIEW: APPS ═══════ -->
+<div class="view" id="viewApps">
+  <div class="apps-view" id="appsView">
+    <div class="apps-toolbar">
+      <span class="apps-title">APP SESSIONS</span>
+      <button class="btn-refresh" onclick="loadSessions()">↺ REFRESH</button>
+    </div>
+    <div id="appsList">
+      <div class="apps-empty">DISCONNECTED<br>กด CONN ก่อนครับ</div>
+    </div>
+  </div>
+</div><!-- /viewApps -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ───────────────────────────────────────
+let serverURL = "";
+let curVol = 0;
+let isMuted = false;
+let pflOn = false;
+let soloOn = false;
+let pollTimer = null;
+let vuAnimId = null;
+let vuLevel = 0;
+let vuTarget = 0;
+
+// ── VU Meter init ────────────────────────────────
+const VU_SEGS = 28;
+const VU_GREEN_MAX = Math.floor(VU_SEGS * 0.6);   // 0-60%
+const VU_YELLOW_MAX = Math.floor(VU_SEGS * 0.82); // 60-82%
+// above = red
+
+function buildVuBar(elId) {
+  const el = document.getElementById(elId);
+  for (let i = 0; i < VU_SEGS; i++) {
+    const s = document.createElement('div');
+    s.className = 'vu-seg';
+    s.id = elId + '_' + i;
+    el.appendChild(s);
+  }
+}
+buildVuBar('vuBarL');
+buildVuBar('vuBarR');
+
+function updateVuBars(volPct, muted) {
+  const active = muted ? 0 : Math.round((volPct / 100) * VU_SEGS);
+  // slight random variation for L/R to look natural
+  const varL = active > 0 ? Math.max(0, active + Math.round((Math.random()-0.5)*2)) : 0;
+  const varR = active > 0 ? Math.max(0, active + Math.round((Math.random()-0.5)*2)) : 0;
+
+  ['L','R'].forEach((ch, ci) => {
+    const v = ci === 0 ? varL : varR;
+    for (let i = 0; i < VU_SEGS; i++) {
+      const seg = document.getElementById('vuBar'+ch+'_'+i);
+      if (!seg) continue;
+      let cls = 'vu-seg';
+      if (i < v) {
+        if (i < VU_GREEN_MAX) cls += ' on-green';
+        else if (i < VU_YELLOW_MAX) cls += ' on-yellow';
+        else cls += ' on-red';
+      }
+      seg.className = cls;
+    }
+  });
+  // Clip LED
+  const clipped = active >= VU_SEGS - 1;
+  document.getElementById('clipL').className = 'clip-led' + (clipped ? ' clip-on' : '');
+  document.getElementById('clipR').className = 'clip-led' + (clipped ? ' clip-on' : '');
+}
+
+// Animate VU for visual feel
+function animateVU() {
+  updateVuBars(curVol, isMuted);
+  vuAnimId = setTimeout(animateVU, 80);
+}
+
+// ── dB scale ─────────────────────────────────────
+const dbMarks = ['∞', '-30', '-20', '-15', '-10', '-5', '0', '+5', '+10'];
+const dbScale = document.getElementById('dbScale');
+dbMarks.forEach(v => {
+  const d = document.createElement('div');
+  d.className = 'db-mark';
+  d.innerHTML = `<div class="db-tick"></div><div class="db-label">${v}</div>`;
+  dbScale.appendChild(d);
+});
+
+// ── Fader logic ──────────────────────────────────
+const faderTrack = document.getElementById('faderTrack');
+const faderHandle = document.getElementById('faderHandle');
+const faderFill = document.getElementById('faderFill');
+
+let dragging = false;
+let dragStartY = 0;
+let dragStartVol = 0;
+
+function getTrackBounds() {
+  const rect = faderTrack.getBoundingClientRect();
+  const pad = 18;
+  return {
+    top: rect.top + pad,
+    bottom: rect.bottom - pad,
+    height: rect.height - pad * 2
+  };
+}
+
+function updateFaderPosition(vol) {
+  const bounds = getTrackBounds();
+  const fillH = bounds.height * (vol / 100);
+  faderFill.style.height = fillH + 'px';
+  const handleBottom = fillH - 18; // 18 = half handle height
+  faderHandle.style.bottom = Math.max(-18, handleBottom) + 'px';
+  faderHandle.style.transform = 'translateX(-50%)';
+}
+
+function startDrag(clientY) {
+  dragging = true;
+  dragStartY = clientY;
+  dragStartVol = curVol;
+  faderHandle.classList.add('dragging');
+}
+function moveDrag(clientY) {
+  if (!dragging) return;
+  const bounds = getTrackBounds();
+  const dy = dragStartY - clientY;
+  const delta = (dy / bounds.height) * 100;
+  const newVol = Math.round(Math.max(0, Math.min(100, dragStartVol + delta)));
+  if (newVol !== curVol) {
+    curVol = newVol;
+    renderVolUI(curVol, isMuted);
+    sendVolDebounced(newVol);
+  }
+}
+function endDrag() {
+  if (!dragging) return;
+  dragging = false;
+  faderHandle.classList.remove('dragging');
+}
+
+function tapTrack(clientY) {
+  const bounds = getTrackBounds();
+  const relY = clientY - bounds.top;
+  const newVol = Math.round(Math.max(0, Math.min(100, (1 - relY / bounds.height) * 100)));
+  curVol = newVol;
+  renderVolUI(curVol, isMuted);
+  sendVolDebounced(newVol);
+}
+
+faderTrack.addEventListener('touchstart', e => {
+  e.preventDefault();
+  startDrag(e.touches[0].clientY);
+}, { passive: false });
+faderTrack.addEventListener('touchmove', e => {
+  e.preventDefault();
+  moveDrag(e.touches[0].clientY);
+}, { passive: false });
+faderTrack.addEventListener('touchend', e => {
+  e.preventDefault();
+  endDrag();
+  sendVolNow(curVol);
+}, { passive: false });
+faderTrack.addEventListener('mousedown', e => startDrag(e.clientY));
+window.addEventListener('mousemove', e => { if (dragging) moveDrag(e.clientY); });
+window.addEventListener('mouseup', () => { if (dragging) { endDrag(); sendVolNow(curVol); } });
+
+// ── API helpers ──────────────────────────────────
+let volSendTimer = null;
+function sendVolDebounced(v) {
+  clearTimeout(volSendTimer);
+  volSendTimer = setTimeout(() => sendVolNow(v), 100);
+}
+async function sendVolNow(v) {
+  const data = await apiFetch(`/set?v=${v}`);
+  if (data) updateUI(data, true);
+}
+
+function getBase() {
+  let v = document.getElementById('ipInput').value.trim();
+  if (!v) return null;
+  if (!v.startsWith('http')) v = 'http://' + v;
+  return v.replace(/\/$/, '');
+}
+async function apiFetch(path) {
+  const base = getBase();
+  if (!base) { showToast('กรอก IP ก่อน', true); return null; }
+  try {
+    const res = await fetch(base + path, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch(e) {
+    setOffline();
+    return null;
+  }
+}
+
+// ── UI render ────────────────────────────────────
+function renderVolUI(vol, muted) {
+  const numEl = document.getElementById('volNum');
+  numEl.innerHTML = vol + '<span class="lcd-pct">%</span>';
+  numEl.className = 'lcd-value' + (muted ? ' muted' : '');
+  faderFill.className = 'fader-fill' + (muted ? ' muted' : '');
+  faderHandle.className = 'fader-handle' + (dragging ? ' dragging' : '') + (muted ? ' muted' : '');
+  updateFaderPosition(vol);
+}
+
+function updateUI(data) {
+  if (!data) return;
+  curVol = data.volume;
+  isMuted = data.muted;
+  renderVolUI(curVol, isMuted);
+
+  const muteBtn = document.getElementById('muteBtn');
+  const muteLabel = document.getElementById('muteLabel');
+  if (isMuted) {
+    muteBtn.classList.add('is-muted');
+    muteLabel.textContent = 'UNMUTE';
+  } else {
+    muteBtn.classList.remove('is-muted');
+    muteLabel.textContent = 'MUTE';
+  }
+
+  const statusEl = document.getElementById('volStatus');
+  statusEl.textContent = isMuted ? 'MUTED' : 'LIVE';
+  statusEl.className = 'vol-status' + (isMuted ? ' muted' : ' live');
+  setOnline();
+}
+
+function setOnline() { document.getElementById('statusDot').className = 'status-dot online'; }
+function setOffline() {
+  document.getElementById('statusDot').className = 'status-dot error';
+  document.getElementById('volStatus').textContent = 'OFFLINE';
+  document.getElementById('volStatus').className = 'vol-status';
+}
+
+let toastTimer;
+function showToast(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 1800);
+}
+
+// ── Actions ──────────────────────────────────────
+async function connect() {
+  const base = getBase();
+  if (!base) { showToast('กรอก IP:PORT ก่อน', true); return; }
+  localStorage.setItem('vol_server', document.getElementById('ipInput').value.trim());
+  const data = await apiFetch('/status');
+  if (data) { updateUI(data); showToast('CONNECTED'); startPolling(); }
+}
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    const data = await apiFetch('/status');
+    if (data) updateUI(data);
+  }, 2000);
+}
+async function setVol(v) {
+  const data = await apiFetch(`/set?v=${v}`);
+  if (data) { updateUI(data); showToast('SET ' + v + '%'); }
+}
+async function toggleMute() {
+  const data = await apiFetch('/toggle_mute');
+  if (data) { updateUI(data); showToast(data.muted ? 'MUTED' : 'UNMUTED'); }
+}
+function togglePFL() {
+  pflOn = !pflOn;
+  document.getElementById('pflBtn').className = 'btn-side' + (pflOn ? ' active' : '');
+  showToast('PFL ' + (pflOn ? 'ON' : 'OFF'));
+}
+function toggleSolo() {
+  soloOn = !soloOn;
+  document.getElementById('soloBtn').className = 'btn-side' + (soloOn ? ' active' : '');
+  showToast('SOLO ' + (soloOn ? 'ON' : 'OFF'));
+}
+
+// ── Tab switching ────────────────────────────────
+function switchTab(tab) {
+  document.getElementById('tabMaster').className = 'tab-btn' + (tab==='master'?' active':'');
+  document.getElementById('tabApps').className   = 'tab-btn' + (tab==='apps'?' active':'');
+  document.getElementById('viewMaster').className = 'view' + (tab==='master'?' active':'');
+  document.getElementById('viewApps').className   = 'view' + (tab==='apps'?' active':'');
+  if (tab === 'apps' && getBase()) loadSessions();
+}
+
+// ── App icon map ─────────────────────────────────
+const APP_ICONS = {
+  chrome:'🌐', msedge:'🌐', firefox:'🦊', opera:'🎭',
+  brave:'🦁', safari:'🧭', iexplore:'🌐',
+  spotify:'🎵', itunes:'🎵', vlc:'🎬', wmplayer:'🎬',
+  discord:'💬', teams:'💼', zoom:'📹', skype:'📞',
+  slack:'💬', telegram:'✈️', whatsapp:'💬', line:'💬',
+  notepad:'📝', code:'💻', devenv:'⚙️', powershell:'⚙️',
+  cmd:'⚙️', python:'🐍', node:'🟢',
+};
+function getIcon(name) {
+  const key = name.toLowerCase();
+  for (const [k, v] of Object.entries(APP_ICONS)) {
+    if (key.includes(k)) return v;
+  }
+  return '🔊';
+}
+
+// ── Load sessions ────────────────────────────────
+let sessions = [];
+
+async function loadSessions() {
+  const data = await apiFetch('/sessions');
+  if (!data) return;
+  sessions = data.sessions || [];
+  renderSessions();
+}
+
+function renderSessions() {
+  const list = document.getElementById('appsList');
+  if (!sessions.length) {
+    list.innerHTML = '<div class="apps-empty">ไม่พบ app ที่มีเสียง<br><span style="font-size:9px;opacity:.5">ลองเปิด app ที่มีเสียงก่อนครับ</span></div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  sessions.forEach(s => {
+    const strip = document.createElement('div');
+    strip.className = 'app-strip' + (s.muted ? ' is-muted' : '');
+    strip.id = 'strip_' + s.pid;
+
+    const fillClass = s.muted ? 'muted' : s.volume >= 90 ? 'clip' : s.volume >= 70 ? 'high' : '';
+
+    strip.innerHTML = `
+      <div class="app-top-row">
+        <div class="app-icon">${getIcon(s.name)}</div>
+        <div class="app-name" title="${s.name} (PID ${s.pid})">${s.name}</div>
+        <div class="app-vol-num ${s.muted?'muted':''}" id="num_${s.pid}">${s.volume}<span style="font-size:8px;opacity:.6">%</span></div>
+        <button class="btn-app-mute ${s.muted?'is-muted':''}" id="mute_${s.pid}"
+                onclick="appToggleMute(${s.pid})">${s.muted?'UNMUTE':'MUTE'}</button>
+      </div>
+      <div class="h-fader-wrap" id="fader_${s.pid}" data-pid="${s.pid}">
+        <div class="h-fader-rail">
+          <div class="h-fader-fill ${fillClass}" id="fill_${s.pid}" style="width:${s.volume}%"></div>
+        </div>
+        <div class="h-fader-thumb" id="thumb_${s.pid}" style="left:${s.volume}%">
+          <div class="h-thumb-grip"></div>
+        </div>
+      </div>`;
+
+    list.appendChild(strip);
+
+    // attach fader drag events after element is in DOM
+    requestAnimationFrame(() => attachFader(s.pid));
+  });
+}
+
+// ── Horizontal fader drag ─────────────────────────
+function attachFader(pid) {
+  const wrap = document.getElementById('fader_' + pid);
+  if (!wrap) return;
+
+  let dragging = false;
+  let startX = 0, startVol = 0;
+  let sendTimer = null;
+
+  function getVolFromX(clientX) {
+    const rect = wrap.getBoundingClientRect();
+    const rel = (clientX - rect.left) / rect.width;
+    return Math.round(Math.max(0, Math.min(100, rel * 100)));
+  }
+
+  function onMove(clientX) {
+    if (!dragging) return;
+    const v = getVolFromX(clientX);
+    const s = findSession(pid);
+    if (!s || v === s.volume) return;
+    s.volume = v;
+    updateFaderUI(pid, v, s.muted);
+    // debounce server send
+    clearTimeout(sendTimer);
+    sendTimer = setTimeout(() => sendAppVol(pid, v), 80);
+  }
+
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    wrap.classList.remove('dragging');
+    const s = findSession(pid);
+    if (s) { clearTimeout(sendTimer); sendAppVol(pid, s.volume); }
+  }
+
+  // touch
+  wrap.addEventListener('touchstart', e => {
+    e.preventDefault();
+    dragging = true;
+    wrap.classList.add('dragging');
+    startX = e.touches[0].clientX;
+    startVol = findSession(pid)?.volume ?? 0;
+    onMove(startX);
+  }, { passive: false });
+
+  wrap.addEventListener('touchmove', e => {
+    e.preventDefault();
+    onMove(e.touches[0].clientX);
+  }, { passive: false });
+
+  wrap.addEventListener('touchend', e => { e.preventDefault(); onEnd(); }, { passive: false });
+
+  // mouse
+  wrap.addEventListener('mousedown', e => {
+    dragging = true;
+    wrap.classList.add('dragging');
+    startX = e.clientX;
+    startVol = findSession(pid)?.volume ?? 0;
+    onMove(startX);
+  });
+  window.addEventListener('mousemove', e => { if (dragging) onMove(e.clientX); });
+  window.addEventListener('mouseup',   () => { if (dragging) onEnd(); });
+}
+
+async function sendAppVol(pid, v) {
+  await apiFetch(`/session/set?pid=${pid}&v=${v}`);
+}
+
+// ── Update fader UI ───────────────────────────────
+function updateFaderUI(pid, vol, muted) {
+  const fill  = document.getElementById('fill_'  + pid);
+  const thumb = document.getElementById('thumb_' + pid);
+  const num   = document.getElementById('num_'   + pid);
+  const strip = document.getElementById('strip_' + pid);
+
+  if (fill) {
+    fill.style.width = vol + '%';
+    fill.className = 'h-fader-fill' + (muted?' muted':vol>=90?' clip':vol>=70?' high':'');
+  }
+  if (thumb) thumb.style.left = vol + '%';
+  if (num) {
+    num.innerHTML = vol + '<span style="font-size:8px;opacity:.6">%</span>';
+    num.className = 'app-vol-num' + (muted ? ' muted' : '');
+  }
+  if (strip) strip.className = 'app-strip' + (muted ? ' is-muted' : '');
+}
+
+// ── App helpers ───────────────────────────────────
+function findSession(pid) { return sessions.find(s => s.pid === pid); }
+
+function updateStripUI(pid, vol, muted) {
+  const s = findSession(pid);
+  if (s) { s.volume = vol; s.muted = muted; }
+  updateFaderUI(pid, vol, muted);
+  const muteBtn = document.getElementById('mute_' + pid);
+  if (muteBtn) {
+    muteBtn.className = 'btn-app-mute' + (muted ? ' is-muted' : '');
+    muteBtn.textContent = muted ? 'UNMUTE' : 'MUTE';
+  }
+}
+
+async function appToggleMute(pid) {
+  const s = findSession(pid); if (!s) return;
+  const data = await apiFetch(`/session/toggle_mute?pid=${pid}`);
+  if (data?.ok !== undefined) {
+    updateStripUI(pid, s.volume, data.muted);
+    showToast(data.muted ? 'APP MUTED' : 'APP UNMUTED');
+  }
+}
+
+// ── On load ──────────────────────────────────────
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('vol_server');
+  if (saved) {
+    document.getElementById('ipInput').value = saved;
+    connect();
+  }
+  requestAnimationFrame(() => updateFaderPosition(0));
+  animateVU();
+});
+window.addEventListener('resize', () => updateFaderPosition(curVol));
+
+// ── Service Worker ───────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
